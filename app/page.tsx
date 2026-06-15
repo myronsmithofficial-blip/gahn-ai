@@ -1,14 +1,37 @@
 import Link from "next/link";
 
 const features = [
-  ["AI-Powered Instructors", "Learn from adaptive AI instructors built around your goals."],
-  ["Real Skills Real Results", "Gain practical skills you can apply in real-world scenarios."],
-  ["Proven Learning Methods", "Use recall, practice, feedback, and review to learn faster."],
-  ["Secure & Private By Design", "Your account and learning data stay protected."],
-  ["Your Future Starts Here", "Build confidence, portfolio proof, and career readiness."],
+  ["AI-Powered Instructors", "Adaptive AI instructors built around each learner."],
+  ["Real Skills Real Results", "Learn skills that can be applied in school, career, and life."],
+  ["Proven Learning Methods", "Practice, recall, feedback, and review built into the system."],
+  ["Secure & Private By Design", "User accounts and learning data stay protected."],
+  ["Your Future Starts Here", "Build confidence, progress, and career readiness."],
 ];
 
 const trustLogos = ["Google", "Microsoft", "AWS", "NVIDIA", "OpenAI"];
+
+const instructors = [
+  ["Nova", "Python & Data Science", "Coding, logic, data analysis, and AI fundamentals."],
+  ["Arin", "Business & Leadership", "Strategy, entrepreneurship, leadership, and career growth."],
+  ["Lena", "Math & Science", "Complex subjects explained clearly with examples and practice."],
+  ["Kai", "General Knowledge", "Life skills, technology, communication, and decision making."],
+];
+
+const worlds = [
+  ["Career Skills", "Learn business, coding, AI, communication, and professional skills."],
+  ["School Help", "Get guided support for math, science, reading, writing, and studying."],
+  ["Brain Development", "Improve memory, focus, discipline, reasoning, and learning habits."],
+  ["Book Intelligence", "Turn books into lessons, summaries, quizzes, and learning paths."],
+];
+
+const steps = [
+  ["01", "Choose A Learning World", "Pick the subject or skill area you want to improve."],
+  ["02", "Set Your Goal", "Tell GAHN AI what you want to learn and why it matters."],
+  ["03", "Learn With AI Instructors", "AI instructors explain, question, correct, and guide you."],
+  ["04", "Practice And Recall", "Use exercises, quizzes, and active recall to remember more."],
+  ["05", "Track Progress", "Save notes, achievements, completed lessons, and skill growth."],
+  ["06", "Build Real Skills", "Move from learning to projects, certificates, and career readiness."],
+];
 
 function WaveLines() {
   return (
@@ -22,7 +45,11 @@ function WaveLines() {
       {Array.from({ length: 16 }).map((_, i) => (
         <path
           key={i}
-          d={`M0 ${210 + i * 7} C 250 ${120 + i * 4}, 470 ${120 + i * 4}, 650 ${205 + i * 3} C 840 ${295 + i * 3}, 1100 ${295 + i * 3}, 1440 ${190 + i * 7}`}
+          d={`M0 ${210 + i * 7} C 250 ${120 + i * 4}, 470 ${
+            120 + i * 4
+          }, 650 ${205 + i * 3} C 840 ${295 + i * 3}, 1100 ${
+            295 + i * 3
+          }, 1440 ${190 + i * 7}`}
           stroke="#93c5fd"
           strokeWidth="1"
           opacity={0.38 - i * 0.012}
@@ -51,8 +78,8 @@ function WhiteDip() {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white text-[#061633]">
-      <section className="relative overflow-hidden bg-[#02122b] px-4 pt-4 text-white [zoom:0.82]">
+    <main className="min-h-screen bg-white text-[#061633] [zoom:0.68]">
+      <section className="relative overflow-hidden bg-[#02122b] px-4 pt-4 text-white">
         <nav className="relative z-20 mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-white px-5 py-3 text-[#061633] shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
           <Link href="/" className="flex items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-full border border-blue-200 bg-blue-50 text-xl text-blue-600">
@@ -76,16 +103,10 @@ export default function Home() {
           </div>
 
           <div className="flex shrink-0 gap-2">
-            <Link
-              href="/login"
-              className="hidden rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold sm:block"
-            >
+            <Link href="/login" className="hidden rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold sm:block">
               Log In
             </Link>
-            <Link
-              href="/login"
-              className="rounded-xl bg-[#071f4d] px-5 py-2 text-sm font-semibold text-white shadow-lg"
-            >
+            <Link href="/login" className="rounded-xl bg-[#071f4d] px-5 py-2 text-sm font-semibold text-white shadow-lg">
               Get Started →
             </Link>
           </div>
@@ -114,10 +135,7 @@ export default function Home() {
             traditional education.
           </p>
 
-          <Link
-            href="/login"
-            className="mt-9 inline-flex rounded-2xl border border-blue-300/40 bg-[#0b2f6d] px-12 py-4 text-xl font-black shadow-[0_0_30px_rgba(11,47,109,0.35)] transition hover:bg-[#12438f]"
-          >
+          <Link href="/login" className="mt-9 inline-flex rounded-2xl border border-blue-300/40 bg-[#0b2f6d] px-12 py-4 text-xl font-black shadow-[0_0_30px_rgba(11,47,109,0.35)] transition hover:bg-[#12438f]">
             Enter System →
           </Link>
 
@@ -132,7 +150,7 @@ export default function Home() {
         <WhiteDip />
       </section>
 
-      <section className="relative bg-white px-5 pb-16 pt-8">
+      <section id="features" className="relative bg-white px-5 pb-16 pt-8">
         <div className="mx-auto max-w-7xl text-center">
           <p className="text-base font-bold text-[#061633]">
             Trusted by learners worldwide
@@ -144,12 +162,9 @@ export default function Home() {
             ))}
           </div>
 
-          <div id="features" className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
             {features.map(([title, text], index) => (
-              <div
-                key={title}
-                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(2,6,23,0.06)] transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(2,6,23,0.1)]"
-              >
+              <div key={title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(2,6,23,0.06)] transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(2,6,23,0.1)]">
                 <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-blue-50 text-2xl text-blue-700">
                   {["✦", "▥", "◌", "⌂", "↗"][index]}
                 </div>
@@ -160,6 +175,246 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section id="instructors" className="bg-[#02122b] px-6 py-20 text-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-300">
+              AI Instructor Preview
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+              Meet Your AI Instructors
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100/75">
+              Realistic AI instructors built to explain, challenge, correct, and adapt to each learner.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {instructors.map(([name, role, desc]) => (
+              <div key={name} className="overflow-hidden rounded-3xl border border-blue-400/20 bg-white/5 shadow-2xl backdrop-blur">
+                <div className="relative grid h-72 place-items-center bg-gradient-to-br from-[#102b5a] via-[#142d63] to-[#07152f]">
+                  <div className="grid h-28 w-28 place-items-center rounded-full border border-blue-300/30 bg-blue-400/10 text-5xl">
+                    ✦
+                  </div>
+                  <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-3 py-1 text-xs">
+                    <span className="mr-2 inline-block h-2 w-2 rounded-full bg-green-400" />
+                    Online
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-2xl font-bold">{name}</h3>
+                  <p className="mt-1 text-sm font-semibold text-blue-300">{role} Instructor</p>
+                  <p className="mt-4 text-sm leading-6 text-blue-100/75">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="worlds" className="bg-white px-6 py-20 text-[#061633]">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+              Learning Worlds
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+              Choose What You Want To Master
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+              GAHN AI is designed around learning worlds that guide users into the right path.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {worlds.map(([title, text]) => (
+              <div key={title} className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                <div className="mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-blue-50 text-2xl text-blue-700">
+                  ◇
+                </div>
+                <h3 className="text-2xl font-black">{title}</h3>
+                <p className="mt-4 leading-7 text-slate-600">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#f6f9ff] px-6 py-20 text-[#061633]">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+              Product Preview
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+              A Learning Dashboard Built Around You
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              Users will be able to see lessons, AI instructor guidance, progress, notes, assessments, achievements, and learning paths in one clean dashboard.
+            </p>
+            <p className="mt-4 text-lg leading-8 text-slate-600">
+              The goal is to make learning feel structured, personal, and easier to follow than searching through random videos or courses.
+            </p>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-2xl">
+            <div className="rounded-[1.5rem] bg-[#02122b] p-6 text-white">
+              <div className="mb-6 flex items-center justify-between">
+                <p className="font-black">Learning Dashboard</p>
+                <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs text-blue-200">
+                  Active
+                </span>
+              </div>
+              <div className="grid gap-4">
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-sm text-blue-200">Current Path</p>
+                  <p className="mt-1 text-xl font-black">Python Foundations</p>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="rounded-2xl bg-white/10 p-4">
+                    <p className="text-sm text-blue-200">Progress</p>
+                    <p className="mt-1 text-2xl font-black">42%</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 p-4">
+                    <p className="text-sm text-blue-200">Instructor</p>
+                    <p className="mt-1 text-2xl font-black">Nova</p>
+                  </div>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-sm text-blue-200">Next Lesson</p>
+                  <p className="mt-1 font-bold">Variables, logic, and practice questions</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white px-6 py-20 text-[#061633]">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-14 text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+              How It Works
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+              From Learning To Real Skill
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+              GAHN AI is built to move users from curiosity to understanding, practice, progress, and real skill development.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {steps.map(([step, title, desc]) => (
+              <div key={step} className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-xl">
+                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-lg font-black text-blue-700">
+                  {step}
+                </div>
+                <h3 className="text-2xl font-bold">{title}</h3>
+                <p className="mt-4 leading-7 text-slate-600">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#02122b] px-6 py-20 text-white">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-1">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-300">
+              Why Different
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight">
+              Not Just Another Course Website
+            </h2>
+          </div>
+
+          <div className="grid gap-5 lg:col-span-2">
+            <div className="rounded-3xl border border-blue-300/20 bg-white/5 p-7">
+              <h3 className="text-2xl font-black">Traditional platforms give content.</h3>
+              <p className="mt-3 leading-7 text-blue-100/75">
+                Most platforms give videos, courses, or notes and leave users to figure out the rest.
+              </p>
+            </div>
+            <div className="rounded-3xl border border-blue-300/20 bg-white/5 p-7">
+              <h3 className="text-2xl font-black">GAHN AI gives guidance.</h3>
+              <p className="mt-3 leading-7 text-blue-100/75">
+                GAHN AI is designed to guide users with AI instructors, learning paths, feedback, practice, and progress tracking.
+              </p>
+            </div>
+            <div className="rounded-3xl border border-blue-300/20 bg-white/5 p-7">
+              <h3 className="text-2xl font-black">The platform adapts to the learner.</h3>
+              <p className="mt-3 leading-7 text-blue-100/75">
+                Instead of everyone learning the same way, GAHN AI is built around each user's goals, weaknesses, pace, and interests.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" className="bg-white px-6 py-20 text-[#061633]">
+        <div className="mx-auto max-w-5xl text-center">
+          <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+            Pricing
+          </p>
+          <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+            Start Learning Smarter
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+            GAHN AI is currently in early development. Join early to follow the platform and get access when the first learning experience is ready.
+          </p>
+
+          <div className="mx-auto mt-10 max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+              Early Access
+            </p>
+            <h3 className="mt-3 text-4xl font-black">Coming Soon</h3>
+            <p className="mt-4 leading-7 text-slate-600">
+              AI instructors, personalized learning paths, progress tracking, learning worlds, and future avatar based lessons.
+            </p>
+            <Link href="/login" className="mt-8 inline-flex w-full justify-center rounded-2xl bg-[#071f4d] px-6 py-4 text-lg font-black text-white shadow-lg">
+              Join Early Access →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="bg-[#f6f9ff] px-6 py-20 text-[#061633]">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+            Founder Vision
+          </p>
+          <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+            Built For The Future Of Education
+          </h2>
+          <p className="mt-5 text-lg leading-8 text-slate-600">
+            GAHN AI is being built around the belief that AI can make education more personal, accessible, and effective. Instead of forcing every learner into the same system, GAHN AI aims to create a system that adapts to each learner.
+          </p>
+          <p className="mt-4 text-lg leading-8 text-slate-600">
+            The long term vision is to create a global network of AI instructors that can help people learn skills, build confidence, and prepare for the future.
+          </p>
+        </div>
+      </section>
+
+      <section id="contact" className="bg-[#02122b] px-6 py-16 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
+          <div>
+            <h2 className="text-3xl font-black">Ready to enter GAHN AI?</h2>
+            <p className="mt-2 text-blue-100/75">
+              Join early and follow the future of AI powered learning.
+            </p>
+          </div>
+          <Link href="/login" className="rounded-2xl bg-white px-8 py-4 font-black text-[#061633]">
+            Get Started →
+          </Link>
+        </div>
+      </section>
+
+      <footer className="bg-[#010b1c] px-6 py-8 text-center text-sm text-blue-100/60">
+        © 2026 GAHN AI. Global AI Human Helper Network.
+      </footer>
     </main>
   );
 }
