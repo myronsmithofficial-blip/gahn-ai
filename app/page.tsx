@@ -1,21 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 36 },
-  show: { opacity: 1, y: 0 },
-};
-
-const staggerContainer = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
-};
 
 const features = [
   ["AI-Powered Instructors", "Adaptive AI instructors built around each learner."],
@@ -25,41 +10,68 @@ const features = [
   ["Your Future Starts Here", "Build confidence, progress, and career readiness."],
 ];
 
-const trustLogos = ["Google", "Microsoft", "AWS", "NVIDIA", "OpenAI"];
-
-const instructors = [
-  ["Nova", "Python & Data Science", "Coding, logic, data analysis, and AI fundamentals."],
-  ["Arin", "Business & Leadership", "Strategy, entrepreneurship, leadership, and career growth."],
-  ["Lena", "Math & Science", "Complex subjects explained clearly with examples and practice."],
-  ["Kai", "General Knowledge", "Life skills, technology, communication, and decision making."],
+const generalKnowledge = [
+  "General Knowledge",
+  "History, technology, communication, culture, life skills, current events, and real-world knowledge.",
+  "/learning/knowledge.png",
 ];
 
-const worlds = [
-  ["Career Skills", "Learn business, coding, AI, communication, and professional skills."],
-  ["School Help", "Get guided support for math, science, reading, writing, and studying."],
-  ["Brain Development", "Improve memory, focus, discipline, reasoning, and learning habits."],
-  ["Book Intelligence", "Turn books into lessons, summaries, quizzes, and learning paths."],
+const instructors = [
+  {
+    name: "Nova",
+    role: "Python & Data Science",
+    desc: "Programming, data analysis, logic, and AI fundamentals.",
+    image: "/instructors/nova.jpg",
+  },
+  {
+    name: "Arin",
+    role: "Business & Leadership",
+    desc: "Strategy, entrepreneurship, leadership, and career growth.",
+    image: "/instructors/arin.jpg",
+  },
+  {
+    name: "Lena",
+    role: "Math & Science",
+    desc: "Clear explanations, examples, practice, and problem solving.",
+    image: "/instructors/lena.jpg",
+  },
+  {
+    name: "Kai",
+    role: "General Knowledge",
+    desc: "Life skills, technology, communication, and decision making.",
+    image: "/instructors/kai.jpg",
+  },
 ];
 
 const steps = [
-  ["01", "Choose A Learning World", "Pick the subject or skill area you want to improve."],
-  ["02", "Set Your Goal", "Tell GAHN AI what you want to learn and why it matters."],
-  ["03", "Learn With AI Instructors", "AI instructors explain, question, correct, and guide you."],
-  ["04", "Practice And Recall", "Use exercises, quizzes, and active recall to remember more."],
-  ["05", "Track Progress", "Save notes, achievements, completed lessons, and skill growth."],
-  ["06", "Build Real Skills", "Move from learning to projects, certificates, and career readiness."],
+  ["01", "Create your account", "Sign up, create your profile, and enter your dashboard."],
+  ["02", "Choose a learning world", "Pick the area you want to improve first."],
+  ["03", "Learn with AI instructors", "Get explanations, practice, corrections, and feedback."],
+  ["04", "Track your growth", "Save notes, complete lessons, build skills, and unlock progress."],
 ];
 
-function WaveLines() {
+const roadmap = [
+  ["Stage 1", "Student dashboard, learning worlds, AI instructors, notes, and guided lessons."],
+  ["Stage 2", "Certificates, portfolios, projects, assessments, and career-ready profiles."],
+  ["Stage 3", "Teacher dashboards, classroom tools, school accounts, and advanced analytics."],
+];
+
+function SectionIntro({
+  eyebrow,
+  title,
+  text,
+}: {
+  eyebrow: string;
+  title: string;
+  text: string;
+}) {
   return (
-    <motion.svg
+    <svg
       className="pointer-events-none absolute bottom-[65px] left-0 z-[2] h-[300px] w-full opacity-75"
       viewBox="0 0 1440 300"
       fill="none"
       preserveAspectRatio="none"
       aria-hidden="true"
-      animate={{ x: [0, -28, 0] }}
-      transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
     >
       {Array.from({ length: 16 }).map((_, i) => (
         <path
@@ -75,23 +87,35 @@ function WaveLines() {
           fill="none"
         />
       ))}
-    </motion.svg>
+    </svg>
   );
 }
 
 function WhiteDip() {
   return (
-    <svg
-      className="absolute bottom-[-1px] left-0 z-10 h-[155px] w-full"
-      viewBox="0 0 1440 155"
-      preserveAspectRatio="none"
-      aria-hidden="true"
+    <motion.div
+      variants={fadeUp}
+      className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm"
     >
-      <path
-        d="M0 58 C 360 130, 1080 130, 1440 58 L1440 155 L0 155 Z"
-        fill="white"
-      />
-    </svg>
+      <img src={image} alt={title} className="h-72 w-full object-cover object-top" />
+
+      <div className="p-7">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">
+          Program
+        </p>
+
+        <h3 className="mt-3 text-2xl font-black">{title}</h3>
+
+        <p className="mt-3 leading-7 text-slate-600">{text}</p>
+
+        <Link
+          href="/signup"
+          className="mt-6 block rounded border border-slate-300 bg-slate-50 px-5 py-4 text-center text-xs font-black uppercase tracking-[0.14em]"
+        >
+          Start {title}
+        </Link>
+      </div>
+    </motion.div>
   );
 }
 
@@ -163,184 +187,123 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white text-[#061633] [zoom:0.68]">
       <section className="relative overflow-hidden bg-[#02122b] px-4 pt-4 text-white">
-        <motion.nav
-          initial={{ opacity: 0, y: -18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: "easeOut" }}
-          className="relative z-20 mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-white px-5 py-3 text-[#061633] shadow-[0_20px_60px_rgba(0,0,0,0.22)]"
-        >
+        <nav className="relative z-20 mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-white px-5 py-3 text-[#061633] shadow-[0_20px_60px_rgba(0,0,0,0.22)]">
           <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-full border border-blue-200 bg-blue-50 text-xl text-blue-600">
-              ✦
+            <div className="grid h-11 w-11 place-items-center rounded-full border border-blue-200 bg-blue-50">
+              <img
+                src="/logo/brain.png"
+                alt="GAHN AI"
+                className="h-7 w-7 object-contain"
+              />
             </div>
+
             <div>
               <p className="text-xl font-black tracking-tight">GAHN AI</p>
-              <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-500">
+              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">
                 Global AI Human Helper Network
               </p>
             </div>
           </Link>
 
-          <div className="hidden items-center gap-6 text-sm font-semibold md:flex">
-            <a href="#features">Features</a>
-            <a href="#instructors">AI Instructors</a>
-            <a href="#worlds">Learning Worlds</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#about">About Us</a>
-            <a href="#contact">Contact</a>
+          <div className="hidden items-center gap-8 text-sm font-black uppercase tracking-[0.12em] md:flex">
+            <a href="#programs">Programs</a>
+            <a href="#platform">Platform</a>
+            <a href="#instructors">Instructors</a>
+            <a href="#schools">Schools</a>
+            <Link href="/pricing">Pricing</Link>
           </div>
 
           <div className="flex shrink-0 gap-2">
-            <Link
-              href="/login"
-              className="hidden rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5 hover:bg-slate-50 sm:block"
-            >
+            <Link href="/login" className="hidden rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold sm:block">
               Log In
             </Link>
-            <Link
-              href="/login"
-              className="rounded-xl bg-[#071f4d] px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#0b2f6d]"
-            >
+            <Link href="/login" className="rounded-xl bg-[#071f4d] px-5 py-2 text-sm font-semibold text-white shadow-lg">
               Get Started →
             </Link>
           </div>
-        </motion.nav>
+        </nav>
 
         <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_34%,rgba(25,78,185,0.20),transparent_40%),radial-gradient(circle_at_18%_65%,rgba(17,52,122,0.16),transparent_35%),radial-gradient(circle_at_85%_65%,rgba(17,52,122,0.16),transparent_35%)]" />
 
         <WaveLines />
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="show"
-          className="relative z-10 mx-auto max-w-6xl pb-20 pt-10 text-center"
-        >
-          <motion.div
-            variants={fadeUp}
-            transition={{ duration: 0.55, ease: "easeOut" }}
-            className="mx-auto mb-6 inline-flex rounded-full border border-white/15 bg-[#102b5a] px-5 py-2 text-sm font-medium backdrop-blur"
-          >
+        <div className="relative z-10 mx-auto max-w-6xl pb-20 pt-10 text-center">
+          <div className="mx-auto mb-6 inline-flex rounded-full border border-white/15 bg-[#102b5a] px-5 py-2 text-sm font-medium backdrop-blur">
             ✦ AI-Powered Learning Built For Your Future
-          </motion.div>
+          </div>
 
-          <motion.h1
-            variants={fadeUp}
-            transition={{ duration: 0.65, ease: "easeOut" }}
-            className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.04em] lg:text-5xl xl:text-[4.2rem]"
-          >
+          <h1 className="mx-auto max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.04em] lg:text-5xl xl:text-[4.2rem]">
             Learn Smarter.
             <br />
             <span className="bg-gradient-to-r from-[#8faee8] via-[#3f6ecf] to-[#0d4fc7] bg-clip-text text-transparent">
               Achieve More.
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            variants={fadeUp}
-            transition={{ duration: 0.65, ease: "easeOut" }}
-            className="mx-auto mt-5 max-w-2xl text-base leading-7 text-blue-50/85"
-          >
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-blue-50/85">
             GAHN AI uses advanced AI instructors, proven learning methods, and
             personalized learning paths to help you learn more effectively than
             traditional education.
-          </motion.p>
+          </p>
 
-          <motion.div variants={fadeUp} transition={{ duration: 0.65, ease: "easeOut" }}>
-            <Link
-              href="/login"
-              className="mt-9 inline-flex rounded-2xl border border-blue-300/40 bg-[#0b2f6d] px-12 py-4 text-xl font-black shadow-[0_0_30px_rgba(11,47,109,0.35)] transition hover:-translate-y-1 hover:bg-[#12438f] hover:shadow-[0_0_42px_rgba(11,47,109,0.5)]"
-            >
-              Enter System →
-            </Link>
-          </motion.div>
+          <Link href="/login" className="mt-9 inline-flex rounded-2xl border border-blue-300/40 bg-[#0b2f6d] px-12 py-4 text-xl font-black shadow-[0_0_30px_rgba(11,47,109,0.35)] transition hover:bg-[#12438f]">
+            Enter System →
+          </Link>
 
-          <motion.div
-            variants={fadeUp}
-            transition={{ duration: 0.65, ease: "easeOut" }}
-            className="mt-8 flex flex-wrap justify-center gap-5 text-sm text-blue-50/90"
-          >
+          <div className="mt-8 flex flex-wrap justify-center gap-5 text-sm text-blue-50/90">
             <span>✓ AI-Powered Instructors</span>
             <span>✓ Real Skills, Real Results</span>
             <span>✓ Proven Learning Methods</span>
             <span>✓ Secure & Private</span>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         <WhiteDip />
       </section>
 
       <section id="features" className="relative bg-white px-5 pb-16 pt-8">
         <div className="mx-auto max-w-7xl text-center">
-          <motion.p
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.55 }}
-            className="text-base font-bold text-[#061633]"
-          >
+          <p className="text-base font-bold text-[#061633]">
             Trusted by learners worldwide
-          </motion.p>
+          </p>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-            className="mt-7 flex flex-wrap items-center justify-center gap-10 text-2xl font-black text-slate-400"
-          >
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-10 text-2xl font-black text-slate-400">
             {trustLogos.map((logo) => (
-              <motion.span key={logo} variants={fadeUp}>
-                {logo}
-              </motion.span>
+              <span key={logo}>{logo}</span>
             ))}
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.18 }}
-            className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5"
-          >
+          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
             {features.map(([title, text], index) => (
-              <RevealCard
-                key={title}
-                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(2,6,23,0.06)] transition hover:border-blue-200 hover:shadow-[0_24px_70px_rgba(2,6,23,0.14)]"
-              >
+              <div key={title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(2,6,23,0.06)] transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(2,6,23,0.1)]">
                 <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-blue-50 text-2xl text-blue-700">
                   {["✦", "▥", "◌", "⌂", "↗"][index]}
                 </div>
                 <h3 className="text-lg font-black leading-tight">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
-              </RevealCard>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       <section id="instructors" className="bg-[#02122b] px-6 py-20 text-white">
         <div className="mx-auto max-w-7xl">
-          <SectionIntro
-            dark
-            eyebrow="AI Instructor Preview"
-            title="Meet Your AI Instructors"
-            text="Realistic AI instructors built to explain, challenge, correct, and adapt to each learner."
-          />
+          <div className="mb-12 text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-300">
+              AI Instructor Preview
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+              Meet Your AI Instructors
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100/75">
+              Realistic AI instructors built to explain, challenge, correct, and adapt to each learner.
+            </p>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.18 }}
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-          >
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {instructors.map(([name, role, desc]) => (
-              <RevealCard
-                key={name}
-                className="overflow-hidden rounded-3xl border border-blue-400/20 bg-white/5 shadow-2xl backdrop-blur transition hover:border-blue-300/40 hover:bg-white/[0.07]"
-              >
+              <div key={name} className="overflow-hidden rounded-3xl border border-blue-400/20 bg-white/5 shadow-2xl backdrop-blur">
                 <div className="relative grid h-72 place-items-center bg-gradient-to-br from-[#102b5a] via-[#142d63] to-[#07152f]">
                   <div className="grid h-28 w-28 place-items-center rounded-full border border-blue-300/30 bg-blue-400/10 text-5xl">
                     ✦
@@ -353,37 +316,32 @@ export default function Home() {
 
                 <div className="p-6">
                   <h3 className="text-2xl font-bold">{name}</h3>
-                  <p className="mt-1 text-sm font-semibold text-blue-300">
-                    {role} Instructor
-                  </p>
+                  <p className="mt-1 text-sm font-semibold text-blue-300">{role} Instructor</p>
                   <p className="mt-4 text-sm leading-6 text-blue-100/75">{desc}</p>
                 </div>
-              </RevealCard>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      <section id="worlds" className="bg-white px-6 py-20 text-[#061633]">
+      <section id="schools" className="bg-[#f5f7fb] px-6 py-24">
         <div className="mx-auto max-w-7xl">
-          <SectionIntro
-            eyebrow="Learning Worlds"
-            title="Choose What You Want To Master"
-            text="GAHN AI is designed around learning worlds that guide users into the right path."
-          />
+          <div className="mb-12 text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+              Learning Worlds
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+              Choose What You Want To Master
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+              GAHN AI is designed around learning worlds that guide users into the right path.
+            </p>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.18 }}
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-          >
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {worlds.map(([title, text]) => (
-              <RevealCard
-                key={title}
-                className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:border-blue-200 hover:shadow-xl"
-              >
+              <div key={title} className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                 <div className="mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-blue-50 text-2xl text-blue-700">
                   ◇
                 </div>
@@ -396,14 +354,8 @@ export default function Home() {
       </section>
 
       <section className="bg-[#f6f9ff] px-6 py-20 text-[#061633]">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.25 }}
-          className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2"
-        >
-          <motion.div variants={fadeUp} transition={{ duration: 0.6 }}>
+        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
+          <div>
             <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
               Product Preview
             </p>
@@ -416,14 +368,9 @@ export default function Home() {
             <p className="mt-4 text-lg leading-8 text-slate-600">
               The goal is to make learning feel structured, personal, and easier to follow than searching through random videos or courses.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={fadeUp}
-            transition={{ duration: 0.65 }}
-            whileHover={{ y: -10, scale: 1.01 }}
-            className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-2xl"
-          >
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-2xl">
             <div className="rounded-[1.5rem] bg-[#02122b] p-6 text-white">
               <div className="mb-6 flex items-center justify-between">
                 <p className="font-black">Learning Dashboard</p>
@@ -452,93 +399,85 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </section>
 
       <section className="bg-white px-6 py-20 text-[#061633]">
         <div className="mx-auto max-w-7xl">
-          <SectionIntro
-            eyebrow="How It Works"
-            title="From Learning To Real Skill"
-            text="GAHN AI is built to move users from curiosity to understanding, practice, progress, and real skill development."
-          />
+          <div className="mb-14 text-center">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+              How It Works
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+              From Learning To Real Skill
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+              GAHN AI is built to move users from curiosity to understanding, practice, progress, and real skill development.
+            </p>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.18 }}
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-          >
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {steps.map(([step, title, desc]) => (
-              <RevealCard
-                key={step}
-                className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:border-blue-200 hover:shadow-xl"
-              >
+              <div key={step} className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-xl">
                 <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-lg font-black text-blue-700">
                   {step}
                 </div>
                 <h3 className="text-2xl font-bold">{title}</h3>
                 <p className="mt-4 leading-7 text-slate-600">{desc}</p>
-              </RevealCard>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       <section className="bg-[#02122b] px-6 py-20 text-white">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.25 }}
-          className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-3"
-        >
-          <motion.div variants={fadeUp} className="lg:col-span-1">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-1">
             <p className="text-sm font-bold uppercase tracking-widest text-blue-300">
               Why Different
             </p>
-            <h2 className="mt-3 text-4xl font-black tracking-tight">
-              Not Just Another Course Website
+            <h2 className="mt-3 text-4xl font-black">
+              Start with signup, then continue into your dashboard.
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.div variants={staggerContainer} className="grid gap-5 lg:col-span-2">
-            {[
-              ["Traditional platforms give content.", "Most platforms give videos, courses, or notes and leave users to figure out the rest."],
-              ["GAHN AI gives guidance.", "GAHN AI is designed to guide users with AI instructors, learning paths, feedback, practice, and progress tracking."],
-              ["The platform adapts to the learner.", "Instead of everyone learning the same way, GAHN AI is built around each user's goals, weaknesses, pace, and interests."],
-            ].map(([title, text]) => (
-              <RevealCard
-                key={title}
-                className="rounded-3xl border border-blue-300/20 bg-white/5 p-7 transition hover:border-blue-300/40 hover:bg-white/[0.07]"
-              >
-                <h3 className="text-2xl font-black">{title}</h3>
-                <p className="mt-3 leading-7 text-blue-100/75">{text}</p>
-              </RevealCard>
-            ))}
-          </motion.div>
-        </motion.div>
+          <div className="grid gap-5 lg:col-span-2">
+            <div className="rounded-3xl border border-blue-300/20 bg-white/5 p-7">
+              <h3 className="text-2xl font-black">Traditional platforms give content.</h3>
+              <p className="mt-3 leading-7 text-blue-100/75">
+                Most platforms give videos, courses, or notes and leave users to figure out the rest.
+              </p>
+            </div>
+            <div className="rounded-3xl border border-blue-300/20 bg-white/5 p-7">
+              <h3 className="text-2xl font-black">GAHN AI gives guidance.</h3>
+              <p className="mt-3 leading-7 text-blue-100/75">
+                GAHN AI is designed to guide users with AI instructors, learning paths, feedback, practice, and progress tracking.
+              </p>
+            </div>
+            <div className="rounded-3xl border border-blue-300/20 bg-white/5 p-7">
+              <h3 className="text-2xl font-black">The platform adapts to the learner.</h3>
+              <p className="mt-3 leading-7 text-blue-100/75">
+                Instead of everyone learning the same way, GAHN AI is built around each user's goals, weaknesses, pace, and interests.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="pricing" className="bg-white px-6 py-20 text-[#061633]">
         <div className="mx-auto max-w-5xl text-center">
-          <SectionIntro
-            eyebrow="Pricing"
-            title="Start Learning Smarter"
-            text="GAHN AI is currently in early development. Join early to follow the platform and get access when the first learning experience is ready."
-          />
+          <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
+            Pricing
+          </p>
+          <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+            Start Learning Smarter
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+            GAHN AI is currently in early development. Join early to follow the platform and get access when the first learning experience is ready.
+          </p>
 
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.6 }}
-            whileHover={{ y: -10, scale: 1.015 }}
-            className="mx-auto mt-10 max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl"
-          >
+          <div className="mx-auto mt-10 max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
             <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
               Early Access
             </p>
@@ -546,10 +485,7 @@ export default function Home() {
             <p className="mt-4 leading-7 text-slate-600">
               AI instructors, personalized learning paths, progress tracking, learning worlds, and future avatar based lessons.
             </p>
-            <Link
-              href="/login"
-              className="mt-8 inline-flex w-full justify-center rounded-2xl bg-[#071f4d] px-6 py-4 text-lg font-black text-white shadow-lg transition hover:-translate-y-1 hover:bg-[#0b2f6d]"
-            >
+            <Link href="/login" className="mt-8 inline-flex w-full justify-center rounded-2xl bg-[#071f4d] px-6 py-4 text-lg font-black text-white shadow-lg">
               Join Early Access →
             </Link>
           </motion.div>
@@ -557,14 +493,7 @@ export default function Home() {
       </section>
 
       <section id="about" className="bg-[#f6f9ff] px-6 py-20 text-[#061633]">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto max-w-4xl text-center"
-        >
+        <div className="mx-auto max-w-4xl text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
             Founder Vision
           </p>
@@ -577,31 +506,21 @@ export default function Home() {
           <p className="mt-4 text-lg leading-8 text-slate-600">
             The long term vision is to create a global network of AI instructors that can help people learn skills, build confidence, and prepare for the future.
           </p>
-        </motion.div>
+        </div>
       </section>
 
       <section id="contact" className="bg-[#02122b] px-6 py-16 text-white">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left"
-        >
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
           <div>
-            <h2 className="text-3xl font-black">Ready to enter GAHN AI?</h2>
-            <p className="mt-2 text-blue-100/75">
-              Join early and follow the future of AI powered learning.
+            <p className="text-2xl font-black">GAHN AI</p>
+            <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+              Global AI Human Helper Network
             </p>
           </div>
-          <Link
-            href="/login"
-            className="rounded-2xl bg-white px-8 py-4 font-black text-[#061633] transition hover:-translate-y-1 hover:bg-blue-50"
-          >
+          <Link href="/login" className="rounded-2xl bg-white px-8 py-4 font-black text-[#061633]">
             Get Started →
           </Link>
-        </motion.div>
+        </div>
       </section>
 
       <footer className="bg-[#010b1c] px-6 py-8 text-center text-sm text-blue-100/60">
