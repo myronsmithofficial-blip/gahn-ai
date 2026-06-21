@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 const navItems = [
   ["🏠", "Dashboard"],
@@ -37,6 +42,56 @@ const setupCards = [
 ];
 
 export default function DashboardPage() {
+  const router = useRouter();
+
+  const [fullName, setFullName] = useState("Learner");
+const [initials, setInitials] = useState("AI");
+
+useEffect(() => {
+  async function loadUserProfile() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, email")
+      .eq("id", user.id)
+      .single();
+
+    const name =
+      profile?.full_name ||
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email ||
+      "Learner";
+
+    setFullName(name);
+
+    const generatedInitials = String(name)
+  .split(" ")
+  .filter(Boolean)
+  .map((word: string) => word[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+
+    setInitials(generatedInitials);
+  }
+
+  loadUserProfile();
+}, [router]);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
   return (
     <main className="min-h-screen bg-[#f6f9ff] text-[#061633] [zoom:0.82]">
       <div className="grid min-h-screen grid-cols-[245px_1fr_320px]">
@@ -105,18 +160,32 @@ export default function DashboardPage() {
 
               <div className="flex items-center gap-3 rounded-full bg-white px-4 py-2 shadow-sm">
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-[#071f4d] text-sm font-black text-white">
-                  MS
+                  {initials}
                 </div>
                 <div>
-                  <p className="text-sm font-black">Myron Smith</p>
+                  <p className="text-sm font-black">{fullName}</p>
                   <p className="text-xs text-slate-500">Free Plan</p>
                 </div>
+
+           <Link
+  href="/profile"
+  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-[#061633] hover:bg-slate-50"
+>
+  Edit Profile
+</Link>
+
+<button
+  onClick={handleLogout}
+  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-bold text-white hover:bg-red-600"
+>
+  Logout
+</button>
               </div>
             </div>
           </div>
 
           <div className="mt-7">
-            <h2 className="text-3xl font-black">Welcome back, Myron 👋</h2>
+            <h2 className="text-3xl font-black">Welcome back, {fullName} 👋</h2>
             <p className="mt-1 text-sm text-slate-600">
               Choose a learning world, select an AI instructor, and begin your first session.
             </p>
