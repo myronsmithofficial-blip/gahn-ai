@@ -166,15 +166,22 @@ export default function ProfilePage() {
               </div>
             )}
 
-            <div>
-              <label className="text-sm font-black">Profile Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
-                className="mt-2 block text-sm"
-              />
-            </div>
+           <label className="cursor-pointer rounded-xl bg-[#071f4d] px-5 py-3 text-sm font-black text-white hover:bg-[#0b2d6b]">
+  Change Image
+  <input
+    type="file"
+    accept="image/*"
+    className="hidden"
+    onChange={(e) => {
+      const file = e.target.files?.[0] || null;
+      setAvatarFile(file);
+
+      if (file) {
+        setAvatarUrl(URL.createObjectURL(file));
+      }
+    }}
+  />
+</label>
           </div>
 
           <label className="mt-8 block text-sm font-black">Full Name</label>

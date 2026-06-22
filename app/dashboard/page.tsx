@@ -35,10 +35,11 @@ const stats = [
   ["⭕", "0%", "Overall Progress"],
 ];
 
-const setupCards = [
-  ["Choose AI Instructor", "Select your main private learning instructor."],
-  ["Choose Learning Path", "Pick a world before lessons appear."],
-  ["Upcoming Features", "Certificates, portfolio, projects, and community."],
+const coursePlaceholders = [
+  ["🐍", "Python Programming", "Career Skills"],
+  ["🧮", "Math Fundamentals", "School Help"],
+  ["🧠", "Memory & Focus", "Brain Development"],
+  ["📚", "Book Notes", "Book Intelligence"],
 ];
 
 export default function DashboardPage() {
@@ -61,7 +62,7 @@ export default function DashboardPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name, email, avatar_url")
+        .select("full_name, avatar_url")
         .eq("id", user.id)
         .single();
 
@@ -102,16 +103,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f9ff] text-[#061633] [zoom:0.82]">
-      <div className="grid min-h-screen grid-cols-[245px_1fr_320px]">
-        <aside className="bg-[#02122b] p-5 text-white">
+    <main className="min-h-screen bg-[#f4f7fb] text-[#061633]">
+      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[230px_minmax(0,1fr)_280px]">
+        <aside className="bg-[#02122b] p-4 text-white lg:p-5">
           <div className="flex items-center gap-3">
             <img
               src="/logo/brain.png"
               alt="GAHN AI"
               className="h-11 w-11 rounded-full bg-white object-contain p-1"
             />
-
             <div>
               <h1 className="text-xl font-black">GAHN AI</h1>
               <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-blue-200/70">
@@ -120,10 +120,10 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <nav className="mt-8 space-y-1.5">
+          <nav className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:mt-8 lg:block lg:space-y-1.5">
             {navItems.map(([icon, item], index) => (
               <Link
-                href="/in-progress"
+                href={index === 0 ? "/dashboard" : "/in-progress"}
                 key={item}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${
                   index === 0
@@ -143,7 +143,6 @@ export default function DashboardPage() {
             <p className="mt-2 text-sm leading-6 text-blue-100/70">
               Unlock certificates, portfolio, advanced instructors, and career tools.
             </p>
-
             <Link
               href="/in-progress"
               className="mt-5 block rounded-xl bg-white px-4 py-3 text-sm font-black text-[#061633]"
@@ -153,14 +152,17 @@ export default function DashboardPage() {
           </div>
         </aside>
 
-        <section className="min-w-0 p-5">
-          <div className="flex items-center justify-between gap-5">
-            <input
-              placeholder="Search for skills, topics, careers..."
-              className="h-12 w-full max-w-xl rounded-xl border border-slate-200 bg-white px-5 text-sm shadow-sm outline-none"
-            />
+        <section className="min-w-0 p-4 sm:p-5">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+            <div className="relative w-full max-w-xl">
+              <input
+                placeholder="Search for skills, topics, careers..."
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-5 pr-12 text-sm shadow-sm outline-none"
+              />
+              <span className="absolute right-4 top-3 text-slate-400">⌕</span>
+            </div>
 
-            <div className="flex shrink-0 items-center gap-4">
+            <div className="flex w-full flex-wrap items-center gap-3 xl:w-auto xl:shrink-0">
               <span className="rounded-full bg-white px-5 py-3 text-sm font-bold shadow-sm">
                 🔥 0 Day Streak
               </span>
@@ -185,65 +187,65 @@ export default function DashboardPage() {
                   <p className="text-xs text-slate-500">Free Plan</p>
                 </div>
 
-                <Link
-                  href="/profile"
-                  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-[#061633] hover:bg-slate-50"
-                >
-                  Edit Profile
+                <Link href="/profile" className="text-sm font-black text-slate-500">
+                  ˅
                 </Link>
-
-                <button
-                  onClick={handleLogout}
-                  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-bold text-white hover:bg-red-600"
-                >
-                  Logout
-                </button>
               </div>
+
+              <button
+                onClick={handleLogout}
+                className="rounded-xl bg-red-500 px-4 py-2 text-sm font-bold text-white hover:bg-red-600"
+              >
+                Logout
+              </button>
             </div>
           </div>
 
           <div className="mt-7">
             <h2 className="text-3xl font-black">Welcome back, {fullName} 👋</h2>
             <p className="mt-1 text-sm text-slate-600">
-              Choose a learning world, select an AI instructor, and begin your first session.
+              Continue your learning journey. The future is built by what you learn today.
             </p>
           </div>
 
-          <div className="mt-6 grid grid-cols-4 gap-4">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map(([icon, number, label]) => (
               <div key={label} className="rounded-2xl bg-white p-5 shadow-sm">
-                <div className="text-3xl">{icon}</div>
-                <p className="mt-2 text-2xl font-black">{number}</p>
-                <p className="text-sm text-slate-500">{label}</p>
+                <div className="flex items-center gap-4">
+                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-2xl">
+                    {icon}
+                  </div>
+                  <div>
+                    <p className="text-2xl font-black">{number}</p>
+                    <p className="text-xs font-bold text-slate-500">{label}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
 
           <h3 className="mt-6 text-xl font-black">Choose Your Learning World</h3>
 
-          <div className="mt-4 grid grid-cols-5 gap-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {worlds.map(([title, text, image]) => (
               <Link
                 href="/in-progress"
                 key={title}
-                className="overflow-hidden rounded-2xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
               >
                 <img
                   src={image}
                   alt={title}
-                  className="h-[105px] w-full object-cover object-top"
+                  className="h-[150px] w-full object-cover object-top xl:h-[78px]"
                 />
-
                 <div className="p-4">
-                  <h4 className="text-[15px] font-black uppercase leading-tight">
+                  <h4 className="min-h-[32px] text-[12px] font-black uppercase leading-tight">
                     {title}
                   </h4>
-
-                  <p className="mt-2 h-[48px] text-xs leading-5 text-slate-600">
+                  <p className="mt-1 min-h-[36px] text-[11px] leading-4 text-slate-600">
                     {text}
                   </p>
-
-                  <div className="mt-3 inline-block rounded-lg bg-[#071f4d] px-4 py-2 text-xs font-bold text-white">
+                  <div className="mt-3 inline-block rounded-lg bg-[#071f4d] px-3 py-2 text-[11px] font-bold text-white">
                     Explore →
                   </div>
                 </div>
@@ -251,117 +253,154 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          <h3 className="mt-6 text-xl font-black">Start Your Setup</h3>
+          <div className="mt-6 flex items-center justify-between">
+            <h3 className="text-xl font-black">Continue Learning</h3>
+            <Link href="/in-progress" className="text-sm font-bold text-blue-600">
+              View All
+            </Link>
+          </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-4">
-            {setupCards.map(([title, text]) => (
-              <div key={title} className="rounded-2xl bg-white p-5 shadow-sm">
-                <h3 className="font-black">{title}</h3>
-                <p className="mt-2 min-h-[44px] text-sm leading-6 text-slate-600">
-                  {text}
-                </p>
-
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {coursePlaceholders.map(([icon, title, category]) => (
+              <div key={title} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-2xl">
+                  {icon}
+                </div>
+                <h4 className="mt-3 min-h-[32px] text-[12px] font-black">{title}</h4>
+                <p className="text-xs text-slate-500">{category}</p>
+                <div className="mt-4 h-2 rounded-full bg-slate-200">
+                  <div className="h-2 w-0 rounded-full bg-[#071f4d]" />
+                </div>
+                <p className="mt-2 text-xs font-bold text-slate-500">0% started</p>
                 <Link
                   href="/in-progress"
-                  className="mt-4 inline-flex rounded-lg bg-[#071f4d] px-4 py-2 text-xs font-bold text-white"
+                  className="mt-3 block rounded-lg border border-slate-200 px-4 py-2 text-center text-xs font-bold"
                 >
-                  Start →
+                  Start
                 </Link>
               </div>
             ))}
           </div>
 
-          <h3 className="mt-6 text-xl font-black">Continue Learning</h3>
+          <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <div className="rounded-2xl bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h3 className="font-black">Learning Overview</h3>
+                <span className="text-xs font-bold text-slate-400">This Week</span>
+              </div>
+              <div className="mt-5 grid h-44 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center">
+                <div>
+                  <p className="font-black">No learning data yet</p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Activity appears after your first lesson.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-          <div className="mt-4 rounded-2xl bg-white p-6 shadow-sm">
-            <div className="grid place-items-center rounded-2xl border border-dashed border-slate-300 p-10 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-3xl">
-                📚
+            <div className="rounded-2xl bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h3 className="font-black">AI Recommendations</h3>
+                <Link href="/in-progress" className="text-sm text-blue-600">
+                  View All
+                </Link>
               </div>
 
-              <h4 className="mt-4 text-xl font-black">No Courses Started Yet</h4>
-
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
-                Choose a learning world above and start your first lesson.
-                Your active courses will appear here automatically.
-              </p>
-
-              <Link
-                href="/in-progress"
-                className="mt-5 inline-flex rounded-xl bg-[#071f4d] px-6 py-3 text-sm font-bold text-white"
-              >
-                Explore Learning Worlds
-              </Link>
+              <div className="mt-4 space-y-3">
+                {[
+                  ["Review Spaced Repetition Cards", "Strengthen long-term memory"],
+                  ["Practice Coding Challenge", "Build real problem-solving skill"],
+                  ["Watch System Design Basics", "Recommended next lesson"],
+                ].map(([title, text]) => (
+                  <div key={title} className="flex items-center justify-between rounded-xl border border-slate-200 p-3">
+                    <div>
+                      <p className="text-sm font-black">{title}</p>
+                      <p className="text-xs text-slate-500">{text}</p>
+                    </div>
+                    <Link href="/in-progress" className="rounded-lg bg-slate-100 px-3 py-2 text-xs font-bold">
+                      Start
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <aside className="space-y-4 p-5">
-          <div className="rounded-2xl bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
+        <aside className="grid gap-4 p-4 sm:grid-cols-2 lg:block lg:space-y-4 lg:p-5">
+          <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
+            <div className="flex items-center justify-between p-5">
               <h3 className="font-black">AI Instructor</h3>
               <Link href="/in-progress" className="text-sm text-blue-600">
                 View All
               </Link>
             </div>
 
-            <div className="mt-4 grid h-48 place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-center">
-              <div>
-                <div className="text-4xl">🤖</div>
-                <p className="mt-3 font-black">No Instructor Selected</p>
-                <p className="mx-auto mt-2 max-w-[220px] text-sm text-slate-500">
-                  Choose your main AI instructor for private learning.
+            <div className="mx-5 rounded-2xl bg-[#071f4d] p-4 text-white">
+              <div className="h-40 overflow-hidden rounded-xl bg-white/10">
+                <img
+                  src="/learning/braindevelopment.png"
+                  alt="AI Instructor"
+                  className="h-full w-full object-cover object-top opacity-90"
+                />
+              </div>
+              <div className="mt-4">
+                <p className="text-xs font-bold text-green-300">● Online</p>
+                <p className="mt-2 text-sm leading-6">
+                  Hi {fullName}. Your AI instructor is ready when you choose one.
                 </p>
               </div>
+              <Link
+                href="/in-progress"
+                className="mt-4 block rounded-xl bg-blue-600 px-5 py-3 text-center text-sm font-bold text-white"
+              >
+                Choose Instructor
+              </Link>
             </div>
-
-            <Link
-              href="/in-progress"
-              className="mt-4 block rounded-xl bg-[#071f4d] px-5 py-3 text-center text-sm font-bold text-white"
-            >
-              Choose Instructor
-            </Link>
-          </div>
-
-          <div className="rounded-2xl bg-white p-5 shadow-sm">
-            <h3 className="font-black">Learning Path</h3>
-            <div className="mt-4 rounded-2xl border border-dashed border-slate-300 p-5 text-center text-sm text-slate-500">
-              No learning path selected yet.
-            </div>
+            <div className="h-5" />
           </div>
 
           <div className="rounded-2xl bg-white p-5 shadow-sm">
             <h3 className="font-black">Today&apos;s Schedule</h3>
-            <div className="mt-4 rounded-2xl border border-dashed border-slate-300 p-5 text-center text-sm text-slate-500">
+            <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center text-sm text-slate-500">
               No lessons scheduled yet.
             </div>
           </div>
 
           <div className="rounded-2xl bg-white p-5 shadow-sm">
             <h3 className="font-black">Your Progress</h3>
-            <div className="mx-auto mt-5 grid h-28 w-28 place-items-center rounded-full border-[12px] border-slate-200 text-2xl font-black">
+            <div className="mx-auto mt-5 grid h-32 w-32 place-items-center rounded-full border-[14px] border-slate-200 text-2xl font-black">
               0%
             </div>
-            <p className="mt-4 text-center text-sm text-slate-500">
-              Progress begins after your first completed lesson.
-            </p>
           </div>
 
           <div className="rounded-2xl bg-white p-5 shadow-sm">
-            <h3 className="font-black">Community</h3>
-            <div className="mt-4 rounded-2xl border border-dashed border-slate-300 p-5 text-center text-sm text-slate-500">
-              Community activity will appear here after launch.
+            <h3 className="font-black">Community Feed</h3>
+            <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center text-sm text-slate-500">
+              Community activity appears after launch.
             </div>
-
-            <Link
-              href="/in-progress"
-              className="mt-4 block rounded-xl bg-[#071f4d] px-5 py-3 text-center text-sm font-bold text-white"
-            >
-              Open Community
-            </Link>
           </div>
         </aside>
       </div>
+
+      <footer className="grid grid-cols-1 gap-4 bg-[#02122b] px-5 py-5 text-white sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          ["✦", "AI Powered Learning", "Personalized for you"],
+          ["⚗", "Proven Learning Methods", "Science backed results"],
+          ["🏫", "Real World Outcomes", "Skills, certificates, portfolios"],
+          ["🌍", "Global Community", "Learn. Share. Grow."],
+        ].map(([icon, title, text]) => (
+          <div key={title} className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10">
+              {icon}
+            </div>
+            <div>
+              <p className="text-sm font-black">{title}</p>
+              <p className="text-xs text-blue-100/60">{text}</p>
+            </div>
+          </div>
+        ))}
+      </footer>
     </main>
   );
 }
