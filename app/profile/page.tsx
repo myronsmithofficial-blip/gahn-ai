@@ -8,8 +8,12 @@ import { supabase } from "@/lib/supabaseClient";
 export default function ProfilePage() {
   const router = useRouter();
 
+  const [userId, setUserId] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,15 +30,29 @@ export default function ProfilePage() {
         return;
       }
 
+      setUserId(user.id);
       setEmail(user.email || "");
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, avatar_url")
         .eq("id", user.id)
         .single();
 
-      setFullName(profile?.full_name || user.user_metadata?.full_name || "");
+      setFullName(
+        profile?.full_name ||
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          ""
+      );
+
+      setAvatarUrl(
+        profile?.avatar_url ||
+          user.user_metadata?.avatar_url ||
+          user.user_metadata?.picture ||
+          ""
+      );
+
       setLoading(false);
     }
 
@@ -56,20 +74,57 @@ export default function ProfilePage() {
       return;
     }
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({ full_name: fullName })
-      .eq("id", user.id);
+    let newAvatarUrl = avatarUrl;
 
-    setSaving(false);
+    if (avatarFile) {
+      const fileExt = avatarFile.name.split(".").pop();
+      const filePath = `${user.id}/avatar.${fileExt}`;
 
-    if (error) {
-      setError(error.message);
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, avatarFile, {
+          upsert: true,
+        });
+
+      if (uploadError) {
+        setSaving(false);
+        setError(uploadError.message);
+        return;
+      }
+
+      const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+      newAvatarUrl = data.publicUrl;
+      setAvatarUrl(newAvatarUrl);
+    }
+
+    const { error: profileError } = await supabase.from("profiles").upsert({
+      id: user.id,
+      full_name: fullName,
+      email: user.email,
+      avatar_url: newAvatarUrl,
+      updated_at: new Date().toISOString(),
+    });
+
+    if (profileError) {
+      setSaving(false);
+      setError(profileError.message);
       return;
     }
 
+    await supabase.auth.updateUser({
+      data: {
+        full_name: fullName,
+        avatar_url: newAvatarUrl,
+      },
+    });
+
+    setSaving(false);
     setMessage("Profile updated successfully.");
-    router.refresh();
+
+    setTimeout(() => {
+      router.push("/dashboard");
+      router.refresh();
+    }, 800);
   }
 
   if (loading) {
@@ -89,11 +144,40 @@ export default function ProfilePage() {
 
         <h1 className="mt-6 text-4xl font-black">Edit Profile</h1>
         <p className="mt-2 text-slate-500">
-          Update your account profile information.
+          Update your name and profile image.
         </p>
 
         <form onSubmit={handleSave} className="mt-8">
-          <label className="text-sm font-black">Full Name</label>
+          <div className="flex items-center gap-5">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="Profile"
+                className="h-24 w-24 rounded-full object-cover"
+              />
+            ) : (
+              <div className="grid h-24 w-24 place-items-center rounded-full bg-[#071f4d] text-2xl font-black text-white">
+                {fullName
+                  .split(" ")
+                  .map((word) => word[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase() || "AI"}
+              </div>
+            )}
+
+            <div>
+              <label className="text-sm font-black">Profile Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                className="mt-2 block text-sm"
+              />
+            </div>
+          </div>
+
+          <label className="mt-8 block text-sm font-black">Full Name</label>
           <input
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}

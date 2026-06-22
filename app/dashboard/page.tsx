@@ -45,53 +45,62 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const [fullName, setFullName] = useState("Learner");
-const [initials, setInitials] = useState("AI");
+  const [initials, setInitials] = useState("AI");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
-useEffect(() => {
-  async function loadUserProfile() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  useEffect(() => {
+    async function loadUserProfile() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-    if (!user) {
-      router.push("/login");
-      return;
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, email, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+      const name =
+        profile?.full_name ||
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        user.email ||
+        "Learner";
+
+      const image =
+        profile?.avatar_url ||
+        user.user_metadata?.avatar_url ||
+        user.user_metadata?.picture ||
+        "";
+
+      setFullName(name);
+      setAvatarUrl(image);
+
+      const generatedInitials = String(name)
+        .split(" ")
+        .filter(Boolean)
+        .map((word: string) => word[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+
+      setInitials(generatedInitials || "AI");
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name, email")
-      .eq("id", user.id)
-      .single();
-
-    const name =
-      profile?.full_name ||
-      user.user_metadata?.full_name ||
-      user.user_metadata?.name ||
-      user.email ||
-      "Learner";
-
-    setFullName(name);
-
-    const generatedInitials = String(name)
-  .split(" ")
-  .filter(Boolean)
-  .map((word: string) => word[0])
-  .join("")
-  .slice(0, 2)
-  .toUpperCase();
-
-    setInitials(generatedInitials);
-  }
-
-  loadUserProfile();
-}, [router]);
+    loadUserProfile();
+  }, [router]);
 
   async function handleLogout() {
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
   }
+
   return (
     <main className="min-h-screen bg-[#f6f9ff] text-[#061633] [zoom:0.82]">
       <div className="grid min-h-screen grid-cols-[245px_1fr_320px]">
@@ -159,27 +168,36 @@ useEffect(() => {
               <span className="text-xl">💬</span>
 
               <div className="flex items-center gap-3 rounded-full bg-white px-4 py-2 shadow-sm">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-[#071f4d] text-sm font-black text-white">
-                  {initials}
-                </div>
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={fullName}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="grid h-10 w-10 place-items-center rounded-full bg-[#071f4d] text-sm font-black text-white">
+                    {initials}
+                  </div>
+                )}
+
                 <div>
                   <p className="text-sm font-black">{fullName}</p>
                   <p className="text-xs text-slate-500">Free Plan</p>
                 </div>
 
-           <Link
-  href="/profile"
-  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-[#061633] hover:bg-slate-50"
->
-  Edit Profile
-</Link>
+                <Link
+                  href="/profile"
+                  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-[#061633] hover:bg-slate-50"
+                >
+                  Edit Profile
+                </Link>
 
-<button
-  onClick={handleLogout}
-  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-bold text-white hover:bg-red-600"
->
-  Logout
-</button>
+                <button
+                  onClick={handleLogout}
+                  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-bold text-white hover:bg-red-600"
+                >
+                  Logout
+                </button>
               </div>
             </div>
           </div>
