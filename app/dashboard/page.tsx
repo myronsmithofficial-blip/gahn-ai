@@ -108,7 +108,7 @@ export default function DashboardPage() {
         <aside className="bg-[#02122b] p-4 text-white lg:p-5">
           <div className="flex items-center gap-3">
             <img
-              src="/logo/brain.png"
+              src="/logo/favicon.ico"
               alt="GAHN AI"
               className="h-11 w-11 rounded-full bg-white object-contain p-1"
             />

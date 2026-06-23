@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 const fadeUp = {
@@ -30,6 +31,7 @@ const individualPlans = [
     price: "$29",
     tag: "Build consistency",
     desc: "For students and self-learners who want stronger daily learning support.",
+    stripePlan: "learner_plus",
     features: [
       "More AI instructor sessions",
       "Personalized learning paths",
@@ -47,6 +49,7 @@ const individualPlans = [
     tag: "Most Popular",
     desc: "For serious learners who want mastery, proof of skill, and long-term progress.",
     popular: true,
+    stripePlan: "mastery",
     features: [
       "Unlimited AI learning sessions",
       "Advanced AI instructor memory",
@@ -64,6 +67,7 @@ const individualPlans = [
     price: "$149",
     tag: "Career outcomes",
     desc: "For learners focused on job readiness, interviews, projects, and professional growth.",
+    stripePlan: "career_pro",
     features: [
       "Career roadmap builder",
       "Resume and profile builder",
@@ -84,6 +88,7 @@ const schoolPlans = [
     price: "$499",
     tag: "For teachers",
     desc: "For teachers or small classrooms that need AI lesson support and student progress tools.",
+    stripePlan: "classroom_ai",
     features: [
       "AI classroom assistant",
       "Up to 1 classroom",
@@ -101,6 +106,7 @@ const schoolPlans = [
     tag: "School subscription",
     desc: "For schools that want AI instructors supporting classrooms, teachers, and administrators.",
     featured: true,
+    stripePlan: "school_os",
     features: [
       "Multiple classroom support",
       "Teacher command center",
@@ -142,7 +148,35 @@ const outcomePillars = [
 ];
 
 function PlanCard({ plan, school = false }: { plan: any; school?: boolean }) {
+  const [loading, setLoading] = useState(false);
   const highlighted = plan.popular || plan.featured;
+
+  async function handleCheckout() {
+    if (!plan.stripePlan) {
+      window.location.href = plan.price === "Custom" ? "/in-progress" : "/signup";
+      return;
+    }
+
+    setLoading(true);
+
+    const res = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ plan: plan.stripePlan }),
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+      return;
+    }
+
+    setLoading(false);
+    alert("Could not start checkout. Please try again.");
+  }
 
   return (
     <motion.div
@@ -171,9 +205,7 @@ function PlanCard({ plan, school = false }: { plan: any; school?: boolean }) {
         <span className="text-5xl font-black tracking-tight text-[#061633]">
           {plan.price}
         </span>
-        {plan.price !== "Custom" && (
-          <span className="mb-2 text-slate-500">/mo</span>
-        )}
+        {plan.price !== "Custom" && <span className="mb-2 text-slate-500">/mo</span>}
       </div>
 
       <p className="mt-5 min-h-[96px] text-sm leading-6 text-slate-600">
@@ -191,20 +223,23 @@ function PlanCard({ plan, school = false }: { plan: any; school?: boolean }) {
         ))}
       </ul>
 
-      <Link
-        href="/signup"
-        className={`mt-auto block rounded px-5 py-4 text-center text-sm font-black uppercase tracking-[0.14em] transition ${
+      <button
+        onClick={handleCheckout}
+        disabled={loading}
+        className={`mt-auto block rounded px-5 py-4 text-center text-sm font-black uppercase tracking-[0.14em] transition disabled:cursor-not-allowed disabled:opacity-60 ${
           highlighted
             ? "bg-[#071f4d] text-white hover:bg-[#0b2f6d]"
             : "border border-slate-300 bg-slate-50 text-[#061633] hover:bg-white"
         }`}
       >
-        {plan.price === "Custom"
+        {loading
+          ? "Loading..."
+          : plan.price === "Custom"
           ? "Request Access"
           : school
           ? `Choose ${plan.name}`
           : `Start ${plan.name}`}
-      </Link>
+      </button>
     </motion.div>
   );
 }

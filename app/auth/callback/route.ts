@@ -1,33 +1,34 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
-export async function POST(request: Request) {
-  const { email } = await request.json();
-  const cleanEmail = String(email || "").trim().toLowerCase();
+export async function GET(request: Request) {
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get("code");
+  const next = requestUrl.searchParams.get("next") || "/dashboard";
 
-  if (!cleanEmail) {
-    return NextResponse.json({ exists: false });
-  }
+  const cookieStore = await cookies();
 
-  const supabaseAdmin = createClient(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        },
+      },
+    }
   );
 
-  const { data, error } = await supabaseAdmin
-    .from("profiles")
-    .select("id,email")
-    .ilike("email", cleanEmail)
-    .limit(1);
-
-  if (error) {
-    return NextResponse.json({
-      exists: false,
-      error: error.message,
-    });
+  if (code) {
+    await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.json({
-    exists: Boolean(data && data.length > 0),
-  });
+  return NextResponse.redirect(new URL(next, requestUrl.origin));
 }

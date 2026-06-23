@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const authPages = ["/login", "/signup"];
-  const protectedPages = ["/dashboard", "/profile", "/update-password"];
+  const protectedPages = ["/dashboard", "/profile"];
 
   if (authPages.includes(pathname) && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -48,5 +48,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/signup", "/dashboard/:path*", "/profile/:path*", "/update-password"],
+  matcher: ["/login", "/signup", "/dashboard/:path*", "/profile/:path*"],
 };
