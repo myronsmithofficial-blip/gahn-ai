@@ -2,12 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,7 +19,9 @@ export default function LoginPage() {
     setError("");
     setMessage("");
 
-    if (!email.trim()) {
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail) {
       setError("Please enter your email address.");
       return;
     }
@@ -34,36 +33,40 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
       password,
     });
 
     setLoading(false);
 
-    if (error) {
-  setError(error.message);
-  return;
-}
+    if (loginError) {
+      setError("Invalid email or password.");
+      return;
+    }
 
-window.location.href = "/dashboard";
+    window.location.href = "/dashboard";
   }
 
   async function handleGoogleLogin() {
     setError("");
+    setMessage("");
     setGoogleLoading(true);
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          prompt: "select_account",
+        },
       },
     });
 
     setGoogleLoading(false);
 
-    if (error) {
-      setError(error.message);
+    if (googleError) {
+      setError(googleError.message);
     }
   }
 
@@ -71,21 +74,26 @@ window.location.href = "/dashboard";
     setError("");
     setMessage("");
 
-    if (!email.trim()) {
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail) {
       setError("Enter your email address first, then click Forgot Password.");
       return;
     }
 
     setResetLoading(true);
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-  redirectTo: `${window.location.origin}/update-password`,
-});
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      cleanEmail,
+      {
+        redirectTo: `${window.location.origin}/update-password`,
+      }
+    );
 
     setResetLoading(false);
 
-    if (error) {
-      setError(error.message);
+    if (resetError) {
+      setError(resetError.message);
       return;
     }
 
@@ -93,7 +101,7 @@ window.location.href = "/dashboard";
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f9ff] px-6 py-10 text-[#061633] [zoom:0.55]">
+    <main className="min-h-screen bg-[#f6f9ff] px-6 py-10 text-[#061633] lg:[zoom:0.55]">
       <div className="mx-auto mb-8 text-center">
         <img src="/logo/brain.png" alt="GAHN AI" className="mx-auto mb-4 h-20 w-20 object-contain" />
 

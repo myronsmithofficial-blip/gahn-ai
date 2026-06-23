@@ -3,10 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: Request) {
   const { email } = await request.json();
-  const cleanEmail = String(email || "").trim().toLowerCase();
 
-  if (!cleanEmail) {
-    return NextResponse.json({ exists: false });
+  if (!email) {
+    return NextResponse.json({ exists: false }, { status: 400 });
   }
 
   const supabaseAdmin = createClient(
@@ -16,18 +15,13 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabaseAdmin
     .from("profiles")
-    .select("id,email")
-    .ilike("email", cleanEmail)
-    .limit(1);
+    .select("id")
+    .eq("email", email.trim().toLowerCase())
+    .maybeSingle();
 
   if (error) {
-    return NextResponse.json({
-      exists: false,
-      error: error.message,
-    });
+    return NextResponse.json({ exists: false, error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({
-    exists: Boolean(data && data.length > 0),
-  });
+  return NextResponse.json({ exists: !!data });
 }

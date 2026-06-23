@@ -92,13 +92,15 @@ function ProgramCard({
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white text-[#061633] xl:[zoom:0.83]">
+    <main className="min-h-screen bg-white text-[#061633] xl:[zoom:0.63]">
       <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
         <nav className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:py-5">
           <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-blue-200 bg-blue-50">
-              <img src="/logo/brain.png" alt="GAHN AI" className="h-7 w-7 object-contain" />
-            </div>
+            <img
+  src="/logo/favicon.logo"
+  alt="GAHN AI"
+  className="h-11 w-11 rounded-full object-cover"
+/>
             <div>
               <p className="text-xl font-black tracking-tight">GAHN AI</p>
               <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">

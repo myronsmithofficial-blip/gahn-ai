@@ -2,12 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function SignupPage() {
-  const router = useRouter();
-
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,12 +20,15 @@ export default function SignupPage() {
     setError("");
     setMessage("");
 
-    if (!fullName.trim()) {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = fullName.trim();
+
+    if (!cleanName) {
       setError("Please enter your full name.");
       return;
     }
 
-    if (!email.trim()) {
+    if (!cleanEmail) {
       setError("Please enter your email address.");
       return;
     }
@@ -45,49 +45,79 @@ export default function SignupPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    try {
+      const checkResponse = await fetch("/api/check-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        emailRedirectTo: `${window.location.origin}/login`,
-      },
-    });
+        body: JSON.stringify({ email: cleanEmail }),
+      });
 
-    setLoading(false);
+      const checkData = await checkResponse.json();
 
-    if (error) {
-      setError(error.message);
-      return;
+      if (checkData.exists) {
+        setLoading(false);
+        setError("This account already exists. Please login.");
+        return;
+      }
+
+      const { error: signupError } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password,
+        options: {
+          data: {
+            full_name: cleanName,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      setLoading(false);
+
+      if (signupError) {
+        setError(signupError.message);
+        return;
+      }
+
+      setMessage("Account created. Please check your email to verify your account.");
+    } catch (err) {
+      setLoading(false);
+      setError("Something went wrong. Please try again.");
+      console.error(err);
     }
-
-    setMessage("Account created. Please check your email to verify your account.");
   }
 
   async function handleGoogleSignup() {
     setError("");
+    setMessage("");
     setGoogleLoading(true);
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          prompt: "select_account",
+        },
       },
     });
 
     setGoogleLoading(false);
 
-    if (error) {
-      setError(error.message);
+    if (googleError) {
+      setError(googleError.message);
     }
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f9ff] px-6 py-10 text-[#061633] [zoom:0.55]">
+    <main className="min-h-screen bg-[#f6f9ff] px-6 py-10 text-[#061633] lg:[zoom:0.55]">
       <div className="mx-auto mb-8 text-center">
-        <img src="/logo/brain.png" alt="GAHN AI" className="mx-auto mb-4 h-20 w-20 object-contain" />
+        <img
+          src="/logo/favicon.logo"
+          alt="GAHN AI"
+          className="mx-auto mb-4 h-20 w-20 object-contain"
+        />
 
         <h1 className="text-5xl font-black text-[#061633]">GAHN AI</h1>
 
@@ -112,9 +142,21 @@ export default function SignupPage() {
 
             <div className="mt-12 space-y-8">
               {[
-                ["🧠", "Personalized Learning", "AI instructors adapt lessons and explanations to your needs."],
-                ["📚", "Structured Learning Paths", "Follow guided learning journeys designed for real progress."],
-                ["🏆", "Track Achievement", "Build skills, unlock milestones, and showcase growth."],
+                [
+                  "🧠",
+                  "Personalized Learning",
+                  "AI instructors adapt lessons and explanations to your needs.",
+                ],
+                [
+                  "📚",
+                  "Structured Learning Paths",
+                  "Follow guided learning journeys designed for real progress.",
+                ],
+                [
+                  "🏆",
+                  "Track Achievement",
+                  "Build skills, unlock milestones, and showcase growth.",
+                ],
               ].map(([icon, title, text]) => (
                 <div key={title} className="flex gap-5">
                   <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-blue-500/20 text-2xl">
@@ -144,7 +186,11 @@ export default function SignupPage() {
             disabled={googleLoading}
             className="mt-10 flex w-full items-center justify-center gap-5 rounded-xl border border-slate-200 bg-white px-5 py-4 text-xl shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <img src="/google-logo/google.svg" alt="Google" className="h-8 w-8 object-contain" />
+            <img
+              src="/google-logo/google.svg"
+              alt="Google"
+              className="h-8 w-8 object-contain"
+            />
             <span>{googleLoading ? "Connecting..." : "Continue with Google"}</span>
           </button>
 
@@ -186,8 +232,17 @@ export default function SignupPage() {
               className="mt-5 w-full rounded-2xl border border-slate-200 px-5 py-4 text-lg outline-none focus:border-blue-400"
             />
 
-            {error && <p className="mt-5 rounded-xl bg-red-50 p-4 text-red-600">{error}</p>}
-            {message && <p className="mt-5 rounded-xl bg-green-50 p-4 text-green-700">{message}</p>}
+            {error && (
+              <p className="mt-5 rounded-xl bg-red-50 p-4 text-red-600">
+                {error}
+              </p>
+            )}
+
+            {message && (
+              <p className="mt-5 rounded-xl bg-green-50 p-4 text-green-700">
+                {message}
+              </p>
+            )}
 
             <button
               type="submit"
