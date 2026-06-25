@@ -250,16 +250,19 @@ export default function PricingPage() {
       <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-full border border-slate-200 bg-slate-50 text-[#071f4d]">
-              ✦
-            </div>
-            <div>
-              <p className="text-xl font-black tracking-tight">GAHN AI</p>
-              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">
-                Global AI Human Helper Network
-              </p>
-            </div>
-          </Link>
+  <img
+    src="/logo/favicon.png"
+    alt="GAHN AI"
+    className="h-11 w-11 rounded-full object-cover"
+  />
+
+  <div>
+    <p className="text-xl font-black tracking-tight">GAHN AI</p>
+    <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">
+      Global AI Human Helper Network
+    </p>
+  </div>
+</Link>
 
           <div className="hidden items-center gap-8 text-sm font-black uppercase tracking-[0.12em] md:flex">
             <Link href="/">Home</Link>
