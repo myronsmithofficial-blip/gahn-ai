@@ -2,486 +2,370 @@
 
 import Link from "next/link";
 
-const learningWorlds = [
-  ["💼", "Career Skills", "Leadership, communication, entrepreneurship, and job-ready skills."],
-  ["🎓", "School Help", "Math, science, writing, homework help, and study support."],
-  ["🌍", "General Knowledge", "History, technology, communication, culture, life skills, and real-world knowledge."],
-  ["🧠", "Brain Development", "Focus, memory, habits, discipline, and cognitive performance."],
-  ["📖", "Book Intelligence", "Summaries, notes, quizzes, and learning paths from any book."],
+const worlds = [
+  ["💼", "Career Skills", "Business, leadership, entrepreneurship, communication, and job-ready skills."],
+  ["🎓", "School Help", "Math, science, writing, reading, study support, and guided homework help."],
+  ["🧠", "Brain Development", "Memory, focus, discipline, reasoning, habits, and learning performance."],
+  ["🌍", "General Knowledge", "History, technology, communication, culture, life skills, current events, and real-world knowledge."],
+  ["📚", "Book Intelligence", "Turn books into summaries, lessons, quizzes, notes, and study paths."],
 ];
 
 const instructors = [
-  ["Lena", "Medical Instructor", "Healthcare basics, medical terminology, patient care concepts, and clinical learning support.", "/instructors/lena.jpg"],
-  ["Alex", "Software Engineer", "Coding, full stack development, databases, debugging, and software project guidance.", "/instructors/alex.jpg"],
+  ["Lena", "Medical Instructor", "Healthcare basics, medical terminology, patient-care concepts, and clinical learning support.", "/instructors/lena.jpg"],
+  ["Alex", "Software Engineer", "Coding, full-stack development, databases, debugging, and software project guidance.", "/instructors/alex.jpg"],
   ["Arin", "Finance Instructor", "Money management, business finance, investing basics, budgeting, and financial decision-making.", "/instructors/arin.jpg"],
   ["Hannah", "Nurse Instructor", "Nursing fundamentals, patient support, care routines, safety, and healthcare readiness.", "/instructors/hannah.jpg"],
 ];
 
-const platformFeatures = [
-  ["Guided Learning Paths", "Move through lessons in a clear order instead of guessing what to study next."],
-  ["AI Instructor Support", "Get explanations, guided practice, corrections, and next-step recommendations."],
-  ["Progress Tracking", "Track learning activity, completed lessons, certificates, projects, and portfolio growth."],
-  ["Practice Systems", "Use quizzes, review prompts, and recall practice to strengthen understanding."],
-  ["Project Builder", "Create practical work that can later support your portfolio or career profile."],
-  ["Certificates", "Earn visible proof of progress as lessons and assessments are completed."],
-  ["Career Readiness", "Prepare for interviews, resumes, workplace skills, and professional growth."],
-  ["School Tools", "Future classroom dashboards, teacher tools, and school-wide progress analytics."],
+const steps = [
+  ["01", "Create your account", "Sign up, create your profile, and enter your dashboard."],
+  ["02", "Choose a learning world", "Pick the area you want to improve first."],
+  ["03", "Learn with AI instructors", "Get explanations, practice, corrections, and feedback."],
+  ["04", "Track your growth", "Save notes, complete lessons, build skills, and unlock progress."],
 ];
 
-const careerCategories = [
-  ["Software & Technology", "Full stack development, coding fundamentals, product building, and technical problem solving."],
-  ["Healthcare Readiness", "Medical terminology, patient support, care routines, and healthcare learning foundations."],
-  ["Finance & Business", "Budgeting, business finance, money decisions, entrepreneurship, and leadership."],
-  ["School Success", "Math, science, writing, reading, studying, homework support, and academic confidence."],
-  ["Personal Development", "Memory, focus, habits, discipline, reasoning, and learning performance."],
-  ["Book-Based Learning", "Turn books into notes, summaries, quizzes, lessons, and study paths."],
+const roadmap = [
+  ["Stage 1", "Student dashboard, learning worlds, AI instructors, notes, and guided lessons."],
+  ["Stage 2", "Certificates, portfolios, projects, assessments, and career-ready profiles."],
+  ["Stage 3", "Teacher dashboards, classroom tools, school accounts, and advanced analytics."],
 ];
 
-const learningSteps = [
-  ["01", "Choose a learning world", "Pick the area you want to improve first."],
-  ["02", "Follow a structured path", "Move through lessons in order with a clear next step."],
-  ["03", "Practice with guidance", "Use exercises, quizzes, notes, and instructor feedback."],
-  ["04", "Build proof of progress", "Create projects, certificates, and portfolio-ready achievements over time."],
-];
-
-const outcomes = [
-  ["For learners", "Stay organized, learn in order, and build practical skills without jumping between random content."],
-  ["For career builders", "Create projects, improve confidence, and prepare for job-ready communication."],
-  ["For schools", "Future classroom tools can support teachers, students, and administrators with better visibility."],
-  ["For employers", "Learners can eventually show projects, certificates, portfolios, and measurable skill progress."],
-];
-
-const faqItems = [
-  ["Is GAHN AI only for students?", "No. It is for students, self-learners, career builders, parents, and eventually schools."],
-  ["Are the AI instructors video avatars?", "The MVP starts with structured AI instruction. Video avatars can be added later when the platform has revenue."],
-  ["What should I learn first?", "Start with the learning world that matches your current goal. Career Skills and School Help are good first paths."],
-  ["Will certificates be real?", "Certificates are planned as the platform grows into lessons, assessments, projects, and proof of progress."],
-  ["Can this support classrooms later?", "Yes. The long-term plan includes teacher dashboards, classroom tools, analytics, and student support."],
-];
-
-const footerLinks = {
-  Programs: ["Career Skills", "School Help", "General Knowledge", "Brain Development", "Book Intelligence"],
-  Platform: ["How It Works", "AI Tutors", "Projects", "Certificates", "Pricing"],
-  Schools: ["For Teachers", "For Schools", "Classroom Tools", "Analytics", "Resources"],
-  Company: ["About Us", "Careers", "Blog", "Help Center", "Contact"],
-};
-
-function ButtonLink({
-  href,
-  children,
-  dark = false,
+function SectionIntro({
+  eyebrow,
+  title,
+  text,
 }: {
-  href: string;
-  children: React.ReactNode;
-  dark?: boolean;
+  eyebrow: string;
+  title: string;
+  text: string;
 }) {
   return (
-    <Link
-      href={href}
-      className={`group relative overflow-hidden rounded-lg px-8 py-4 text-center text-sm font-black transition duration-300 hover:-translate-y-1 hover:shadow-xl ${
-        dark
-          ? "bg-[#071f4d] text-white hover:bg-[#0b2f6d]"
-          : "bg-blue-600 text-white hover:bg-blue-700"
-      }`}
-    >
-      <span className="relative z-10">{children}</span>
-      <span className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-20deg] bg-white/20 transition-all duration-700 group-hover:left-[120%]" />
-    </Link>
+    <div className="mx-auto mb-10 max-w-3xl text-center sm:mb-14">
+      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-700 sm:text-xs sm:tracking-[0.24em]">
+        {eyebrow}
+      </p>
+      <h2 className="mt-3 text-3xl font-black tracking-tight text-[#061633] sm:text-4xl lg:text-5xl">
+        {title}
+      </h2>
+      <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function ProgramCard({
+  icon,
+  title,
+  text,
+}: {
+  icon: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-7 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+      <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#071f4d] text-4xl text-white">
+        {icon}
+      </div>
+
+      <p className="mt-6 text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">
+        Program
+      </p>
+      <h3 className="mt-3 text-2xl font-black">{title}</h3>
+      <p className="mt-3 min-h-[84px] text-sm leading-7 text-slate-600 sm:text-base">
+        {text}
+      </p>
+
+      <Link
+        href="/signup"
+        className="mt-6 block rounded-xl border border-slate-300 bg-slate-50 px-5 py-4 text-center text-xs font-black uppercase tracking-[0.14em]"
+      >
+        Start {title}
+      </Link>
+    </div>
   );
 }
 
 export default function Home() {
   return (
-    <main className="min-h-screen scroll-smooth bg-white text-[#061633] lg:[zoom:0.68]">
-      <header className="sticky top-0 z-50 bg-[#020b24] text-white shadow-xl">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-8 py-6">
-          <Link href="/" className="flex items-center gap-4">
-            <img src="/logo/favicon.png" alt="GAHN AI" className="h-14 w-14 rounded-full object-cover" />
+    <main className="min-h-screen bg-white text-[#061633] xl:[zoom:0.63]">
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <nav className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:py-5">
+          <Link href="/" className="flex items-center gap-3">
+            <img
+              src="/logo/favicon.png"
+              alt="GAHN AI"
+              className="h-11 w-11 rounded-full object-cover"
+            />
             <div>
-              <p className="text-2xl font-black">GAHN AI</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-100/70">
+              <p className="text-xl font-black tracking-tight">GAHN AI</p>
+              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">
                 Global AI Human Helper Network
               </p>
             </div>
           </Link>
 
-          <div className="hidden items-center gap-10 text-sm font-bold lg:flex">
-            <Link href="/">Home</Link>
+          <div className="hidden items-center gap-8 text-sm font-black uppercase tracking-[0.12em] lg:flex">
             <a href="#programs">Programs</a>
             <a href="#platform">Platform</a>
             <a href="#instructors">Instructors</a>
             <a href="#schools">Schools</a>
             <Link href="/pricing">Pricing</Link>
-            <a href="#about">About</a>
           </div>
 
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="rounded-lg border border-white/20 px-7 py-3 text-sm font-black transition hover:bg-white/10">
+          <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center">
+            <Link href="/login" className="rounded-xl border border-slate-300 px-5 py-3 text-center text-sm font-black uppercase tracking-[0.12em]">
               Log In
             </Link>
-            <ButtonLink href="/signup">Sign Up</ButtonLink>
+            <Link href="/signup" className="rounded-xl bg-[#071f4d] px-6 py-3 text-center text-sm font-black uppercase tracking-[0.12em] text-white">
+              Sign Up
+            </Link>
           </div>
         </nav>
       </header>
 
-      <section className="px-10 pt-10">
-        <div className="mx-auto grid max-w-[1650px] items-center gap-12 overflow-hidden rounded-[2rem] bg-[#03143b] p-14 text-white shadow-2xl lg:grid-cols-[0.85fr_1.15fr]">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-[#f5f7fb]">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,31,77,0.04)_1px,transparent_1px),linear-gradient(rgba(7,31,77,0.04)_1px,transparent_1px)] bg-[size:54px_54px]" />
+
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_430px] lg:py-24">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-300">
-              AI-powered learning platform
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700 sm:text-sm sm:tracking-[0.24em]">
+              AI learning platform
             </p>
-
-            <h1 className="mt-5 text-6xl font-black leading-[1.05] tracking-tight">
-              Learn smarter.
-              <br />
-              Master faster.
-              <br />
-              <span className="text-blue-500">Build your future.</span>
+            <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.04] tracking-tight sm:text-5xl lg:text-7xl">
+              Learn faster with structured AI instruction.
             </h1>
-
-            <p className="mt-7 max-w-xl text-lg leading-8 text-blue-100/80">
-              GAHN AI combines structured instruction, adaptive learning support,
-              and real-world projects to help learners build useful skills.
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-700 sm:text-xl sm:leading-9">
+              A serious learning platform for students, self-learners, and future classrooms. Choose a learning world, work with AI instructors, and build real skills with guided practice.
             </p>
 
-            <div className="mt-9 flex gap-5">
-              <ButtonLink href="/signup">Start Learning Free →</ButtonLink>
-              <Link href="#programs" className="rounded-lg border border-white/25 px-8 py-4 text-sm font-black transition hover:-translate-y-1 hover:bg-white/10">
-                Explore Programs
+            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:gap-4">
+              <Link href="/signup" className="rounded-xl bg-[#071f4d] px-8 py-4 text-center text-sm font-black uppercase tracking-[0.12em] text-white">
+                Start Learning
+              </Link>
+              <a href="#platform" className="rounded-xl border border-slate-300 bg-white px-8 py-4 text-center text-sm font-black uppercase tracking-[0.12em]">
+                See How It Works
+              </a>
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white p-5 shadow-2xl sm:p-6">
+            <h2 className="text-2xl font-black">Ready to take your next step?</h2>
+            <p className="mt-3 text-slate-600">Create your account and choose your first learning world.</p>
+
+            <div className="mt-6 space-y-4">
+              <select className="w-full rounded-xl border border-slate-300 px-4 py-4">
+                <option>Select your learning world...</option>
+                <option>Career Skills</option>
+                <option>School Help</option>
+                <option>Brain Development</option>
+                <option>General Knowledge</option>
+                <option>Book Intelligence</option>
+              </select>
+
+              <Link href="/signup" className="block rounded-xl bg-[#071f4d] px-5 py-4 text-center text-sm font-black uppercase tracking-[0.14em] text-white">
+                Create Account
               </Link>
             </div>
 
-            <div className="mt-10 grid max-w-xl grid-cols-3 gap-5">
-              {[
-                ["🤖", "AI Tutors", "Always here to help"],
-                ["🎯", "Personalized", "Built for you"],
-                ["🏆", "Career Ready", "Projects & certificates"],
-              ].map(([icon, title, text]) => (
-                <div key={title} className="flex gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-full bg-blue-500/20">{icon}</div>
-                  <div>
-                    <p className="text-sm font-black">{title}</p>
-                    <p className="text-xs text-blue-100/60">{text}</p>
-                  </div>
-                </div>
-              ))}
+            <div className="mt-8 border-t pt-6">
+              <p className="font-black">Platform starts with:</p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                <li>✓ Learning dashboard</li>
+                <li>✓ AI instructor previews</li>
+                <li>✓ Lessons, notes, and progress</li>
+                <li>✓ Certificates and portfolios planned</li>
+              </ul>
             </div>
-          </div>
-
-          <div className="relative min-h-[560px] overflow-hidden rounded-3xl bg-[#061633]">
-            <img
-              src="/learning/school.png"
-              alt="Student learning with laptop"
-              className="h-full min-h-[560px] w-full rounded-3xl object-contain object-center"
-            />
           </div>
         </div>
       </section>
 
-      <section className="px-10 py-8">
-        <div className="mx-auto flex max-w-[1650px] items-center justify-between gap-10 rounded-2xl border border-slate-200 bg-white px-10 py-7 shadow-sm">
-          <p className="max-w-[230px] text-sm font-bold leading-6 text-slate-500">
-            Trusted by learners from top organizations
-          </p>
-          {["Google", "IBM", "Microsoft", "Stanford University", "Meta", "amazon"].map((company) => (
-            <p key={company} className="text-center text-xl font-black text-slate-500">
-              {company}
-            </p>
+      <section id="programs" className="px-4 py-16 sm:px-6 sm:py-24">
+        <SectionIntro
+          eyebrow="Learning worlds"
+          title="Choose the path that matches your goal."
+          text="Each world is designed around a different learning problem: school support, career skills, personal growth, general knowledge, or book intelligence."
+        />
+
+        <div className="mx-auto grid max-w-7xl gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          {worlds.map(([icon, title, text]) => (
+            <ProgramCard key={title} icon={icon} title={title} text={text} />
           ))}
         </div>
       </section>
 
-      <section id="programs" className="scroll-mt-40 px-10 py-20">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">
-            Explore learning worlds
-          </p>
-          <h2 className="mt-4 text-4xl font-black">Choose a path. Start your journey.</h2>
+      <section id="platform" className="bg-[#f5f7fb] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">
+              Platform preview
+            </p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+              A dashboard built around learning action.
+            </h2>
+            <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">
+              The dashboard is where users choose learning worlds, meet AI instructors, continue lessons, track progress, save notes, and build a skill portfolio over time.
+            </p>
 
-          <div className="mt-12 grid gap-5 lg:grid-cols-5">
-            {learningWorlds.map(([icon, title, text]) => (
-              <div key={title} className="flex min-h-[310px] flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-2 hover:shadow-xl">
-                <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#061633] text-4xl text-white">
-                  {icon}
-                </div>
-                <h3 className="mt-6 min-h-[56px] text-xl font-black">{title}</h3>
-                <p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{text}</p>
-                <Link href="/signup" className="mt-6 inline-block text-sm font-black text-blue-700">
-                  Explore →
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="platform" className="scroll-mt-40 px-10 py-20">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-2xl bg-[#03143b] p-10 text-white shadow-2xl">
-            <h2 className="text-4xl font-black">AI learning built around you</h2>
-            <ul className="mt-8 space-y-5 text-blue-100">
+            <div className="mt-8 space-y-4">
               {[
-                "Adaptive AI tutors that teach your way",
-                "Structured lessons with real progress",
-                "Projects that build real-world skills",
-                "Certificates and portfolio to showcase",
+                "Start with a clean dashboard after signup.",
+                "Choose a learning world before lessons appear.",
+                "Progress stays at zero until the user actually starts.",
+                "Future upgrades add certificates, portfolios, and classroom tools.",
               ].map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span className="text-blue-400">●</span>
-                  {item}
-                </li>
+                <div key={item} className="flex gap-3">
+                  <span className="font-black text-blue-700">✓</span>
+                  <p className="text-slate-700">{item}</p>
+                </div>
               ))}
-            </ul>
-
-            <div className="mt-8 rounded-2xl bg-white/10 p-6">
-              <p className="font-black">Learning Path Preview</p>
-              <p className="mt-3 text-blue-100">Choose a world, start a lesson, practice, and save your work.</p>
-              <div className="mt-4 h-2 rounded-full bg-white/20">
-                <div className="h-2 w-[60%] rounded-full bg-blue-400" />
-              </div>
             </div>
           </div>
 
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">
-              Why GAHN AI?
-            </p>
-            <h2 className="mt-4 text-5xl font-black leading-tight">
-              More than courses.
-              <br />
-              A complete learning ecosystem.
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-slate-600">
-              GAHN AI gives learners the structure, support, and tools needed to move from confusion to progress.
-            </p>
-            <div className="mt-8">
-              <ButtonLink href="#features" dark>See Platform Features</ButtonLink>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:p-5">
+            <div className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4 sm:p-5">
+              <div className="flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="font-black">Learning Dashboard</p>
+                <span className="w-fit rounded bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                  New account
+                </span>
+              </div>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {["0 Day Streak", "0 Courses", "0 Certificates", "0% Progress"].map((item) => (
+                  <div key={item} className="rounded-xl bg-white p-4 shadow-sm">
+                    <p className="text-sm font-black">{item}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 rounded-xl bg-white p-5 shadow-sm">
+                <p className="font-black">Continue Learning</p>
+                <p className="mt-2 text-sm text-slate-500">No courses started yet.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="features" className="scroll-mt-40 bg-[#f5f7fb] px-10 py-20">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Platform features</p>
-          <h2 className="mt-4 text-4xl font-black">Everything works together.</h2>
+      <section id="instructors" className="px-4 py-16 sm:px-6 sm:py-24">
+        <SectionIntro
+          eyebrow="AI instructors"
+          title="Specialized instructors for different learning needs."
+          text="Meet role-based AI instructors designed to guide learners through structured lessons, practice, feedback, and next-step support."
+        />
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-4">
-            {platformFeatures.map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-slate-200 bg-white p-7 text-left shadow-sm transition hover:-translate-y-2 hover:shadow-xl">
-                <h3 className="text-2xl font-black">{title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{text}</p>
+        <div className="mx-auto grid max-w-7xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {instructors.map(([name, role, desc, image]) => (
+            <div key={name} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div className="h-72 bg-white p-4">
+                <img src={image} alt={name} className="h-full w-full object-contain object-center" />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-10 py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Career categories</p>
-            <h2 className="mt-4 text-4xl font-black">Learn skills for school, work, and life.</h2>
-          </div>
-
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {careerCategories.map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-2 hover:shadow-xl">
-                <h3 className="text-2xl font-black">{title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{text}</p>
-                <Link href="/signup" className="mt-6 inline-block text-sm font-black text-blue-700">
-                  View Category →
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#f5f7fb] px-10 py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Learning process</p>
-            <h2 className="mt-4 text-4xl font-black">From signup to skill growth.</h2>
-          </div>
-
-          <div className="mt-12 grid gap-6 lg:grid-cols-4">
-            {learningSteps.map(([step, title, text]) => (
-              <div key={step} className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-                <p className="text-sm font-black text-blue-700">{step}</p>
-                <h3 className="mt-4 text-2xl font-black">{title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="instructors" className="scroll-mt-40 px-10 py-20">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">
-            Meet AI instructors
-          </p>
-          <h2 className="mt-4 text-4xl font-black">
-            Learn from specialized AI instructors.
-          </h2>
-
-          <div className="mt-10 grid gap-5 lg:grid-cols-4">
-            {instructors.map(([name, role, text, image]) => (
-              <div key={name} className="overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-sm transition hover:-translate-y-2 hover:shadow-xl">
-                <div className="h-[360px] w-full bg-white p-4">
-                  <img src={image} alt={name} className="mx-auto h-full w-full object-contain object-center" />
-                </div>
-                <div className="p-7">
-                  <h3 className="text-2xl font-black">{name}</h3>
-                  <p className="mt-2 text-sm font-black text-blue-700">{role}</p>
-                  <p className="mt-4 min-h-[72px] text-sm leading-6 text-slate-600">
-                    {text}
-                  </p>
-                  <Link href="/signup" className="mt-5 inline-block text-sm font-black text-blue-700">
-                    View Profile →
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#f5f7fb] px-10 py-20">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Outcomes</p>
-          <h2 className="mt-4 text-4xl font-black">Build evidence of skill, not just course history.</h2>
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-4">
-            {outcomes.map(([title, text]) => (
-              <div key={title} className="rounded-2xl border border-slate-200 bg-white p-8 text-left shadow-sm">
-                <h3 className="text-2xl font-black">{title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="schools" className="scroll-mt-40 px-10 py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 rounded-2xl bg-[#03143b] p-12 text-white shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-300">Schools and classrooms</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight">
-              Built for individual learners now. Designed to scale into classrooms later.
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-blue-100/80">
-              GAHN AI can grow into teacher dashboards, student analytics, classroom progress tracking, and school-wide learning support.
-            </p>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-3">
-            {[
-              ["Teacher Tools", "Help teachers organize lessons, progress, and support."],
-              ["Student Insights", "See learning activity, progress, and skill growth."],
-              ["Classroom Support", "Give students structured help outside normal class time."],
-            ].map(([title, text]) => (
-              <div key={title} className="rounded-2xl bg-white/10 p-6">
-                <h3 className="text-xl font-black">{title}</h3>
-                <p className="mt-4 text-sm leading-7 text-blue-100/75">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-10 py-8">
-        <div className="mx-auto grid max-w-7xl gap-6 rounded-2xl bg-[#03143b] p-8 text-white shadow-2xl md:grid-cols-4">
-          {[
-            ["👥", "Early Access", "Learner Community"],
-            ["🎓", "Structured", "Learning Paths"],
-            ["🏅", "Planned", "Certificates"],
-            ["📈", "Built For", "Long-Term Growth"],
-          ].map(([icon, stat, label]) => (
-            <div key={label} className="flex items-center justify-center gap-5 border-white/10 md:border-r last:border-r-0">
-              <span className="text-4xl">{icon}</span>
-              <div>
-                <p className="text-3xl font-black">{stat}</p>
-                <p className="text-sm text-blue-100/70">{label}</p>
+              <div className="p-5 sm:p-6">
+                <h3 className="text-2xl font-black">{name}</h3>
+                <p className="mt-1 text-sm font-black text-blue-700">{role}</p>
+                <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">{desc}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-[#f5f7fb] px-10 py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">FAQ</p>
-            <h2 className="mt-4 text-4xl font-black">Questions before you start.</h2>
-          </div>
+      <section id="schools" className="bg-[#f5f7fb] px-4 py-16 sm:px-6 sm:py-24">
+        <SectionIntro
+          eyebrow="Schools and classrooms"
+          title="Built to expand from individual learners to classrooms."
+          text="The long-term platform vision includes teacher dashboards, classroom analytics, student support, and school-level accounts."
+        />
 
-          <div className="mt-10 space-y-4">
-            {faqItems.map(([question, answer]) => (
-              <details key={question} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <summary className="cursor-pointer text-xl font-black">{question}</summary>
-                <p className="mt-4 leading-7 text-slate-600">{answer}</p>
-              </details>
-            ))}
-          </div>
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
+          {[
+            ["Teacher dashboard", "Teachers track student progress, lesson activity, and learning gaps."],
+            ["Classroom AI support", "Students receive explanations and practice without waiting for one-on-one help."],
+            ["School analytics", "Schools can review progress, usage, skills, and outcomes across classrooms."],
+          ].map(([title, text]) => (
+            <div key={title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h3 className="text-2xl font-black">{title}</h3>
+              <p className="mt-4 leading-7 text-slate-600">{text}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="px-10 py-12">
-        <div className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-slate-200 bg-blue-50 p-10 shadow-sm">
-          <div className="flex items-center gap-6">
-            <img src="/logo/favicon.png" alt="GAHN AI" className="h-16 w-16 rounded-full object-cover" />
-            <div>
-              <h2 className="text-2xl font-black">Ready to start your learning journey?</h2>
-              <p className="mt-2 text-slate-600">Create your account, choose a learning world, and start building progress.</p>
+      <section className="px-4 py-16 sm:px-6 sm:py-24">
+        <SectionIntro
+          eyebrow="How it works"
+          title="From signup to skill growth."
+          text="The platform starts simple: create an account, choose a world, learn with instructors, and build progress over time."
+        />
+
+        <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map(([num, title, text]) => (
+            <div key={num} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+              <p className="text-sm font-black text-blue-700">{num}</p>
+              <h3 className="mt-4 text-xl font-black">{title}</h3>
+              <p className="mt-3 leading-7 text-slate-600">{text}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#f5f7fb] px-4 py-16 sm:px-6 sm:py-24">
+        <SectionIntro
+          eyebrow="Expansion roadmap"
+          title="A serious platform built in stages."
+          text="The goal is to build the right foundation and expand with users, revenue, and demand."
+        />
+
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
+          {roadmap.map(([stage, text]) => (
+            <div key={stage} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">{stage}</p>
+              <p className="mt-4 leading-7 text-slate-600">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10 lg:grid-cols-[1fr_360px]">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">
+              Get started
+            </p>
+            <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+              Start with signup, then continue into your dashboard.
+            </h2>
+            <p className="mt-4 text-base leading-8 text-slate-600 sm:text-lg">
+              New users create an account first. Returning users log in with their email and continue from the dashboard.
+            </p>
           </div>
 
-          <div className="flex gap-4">
-            <ButtonLink href="/signup">Get Started Free</ButtonLink>
-            <Link href="/pricing" className="rounded-lg border border-blue-300 bg-white px-8 py-4 text-sm font-black text-blue-700 transition hover:-translate-y-1 hover:shadow-lg">
-              View Pricing
+          <div className="grid gap-3">
+            <Link href="/signup" className="rounded-xl bg-[#071f4d] px-8 py-4 text-center text-sm font-black uppercase tracking-[0.14em] text-white">
+              Sign Up
+            </Link>
+            <Link href="/login" className="rounded-xl border border-slate-300 px-8 py-4 text-center text-sm font-black uppercase tracking-[0.14em]">
+              Log In
             </Link>
           </div>
         </div>
       </section>
 
-      <footer id="about" className="scroll-mt-40 bg-[#020b24] px-10 py-14 text-white">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
+      <footer className="border-t border-slate-200 bg-white px-4 py-10 sm:px-6">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 md:flex-row">
           <div>
-            <div className="flex items-center gap-4">
-              <img src="/logo/favicon.logo" alt="GAHN AI" className="h-12 w-12 rounded-full object-cover" />
-              <div>
-                <p className="text-2xl font-black">GAHN AI</p>
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-100/60">
-                  Global AI Human Helper Network
-                </p>
-              </div>
-            </div>
-            <p className="mt-6 max-w-sm leading-8 text-blue-100/70">
-              Empowering learners worldwide with AI-driven education, real-world skills, and career-ready outcomes.
+            <p className="text-2xl font-black">GAHN AI</p>
+            <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+              Global AI Human Helper Network
             </p>
           </div>
 
-          {Object.entries(footerLinks).map(([group, links]) => (
-            <div key={group}>
-              <h3 className="font-black">{group}</h3>
-              <div className="mt-5 space-y-3">
-                {links.map((link) => (
-                  <p key={link} className="text-sm text-blue-100/70">{link}</p>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mx-auto mt-12 flex max-w-7xl justify-between border-t border-white/10 pt-6 text-sm text-blue-100/60">
-          <p>© 2026 GAHN AI. All rights reserved.</p>
-          <div className="flex gap-8">
-            <p>Privacy Policy</p>
-            <p>Terms of Service</p>
-          </div>
+          <p className="text-sm text-slate-500">
+            © 2026 GAHN AI. Built for AI-powered learning.
+          </p>
         </div>
       </footer>
     </main>
