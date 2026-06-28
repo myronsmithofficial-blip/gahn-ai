@@ -4,91 +4,51 @@ import Link from "next/link";
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function SignupPage() {
-  const [fullName, setFullName] = useState("");
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setMessage("");
 
     const cleanEmail = email.trim().toLowerCase();
-    const cleanName = fullName.trim();
-
-    if (!cleanName) {
-      setError("Please enter your full name.");
-      return;
-    }
 
     if (!cleanEmail) {
       setError("Please enter your email address.");
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+    if (!password) {
+      setError("Please enter your password.");
       return;
     }
 
     setLoading(true);
 
-    try {
-      const checkResponse = await fetch("/api/check-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: cleanEmail }),
-      });
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password,
+    });
 
-      const checkData = await checkResponse.json();
+    setLoading(false);
 
-      if (checkData.exists) {
-        setLoading(false);
-        setError("This account already exists. Please login.");
-        return;
-      }
-
-      const { error: signupError } = await supabase.auth.signUp({
-        email: cleanEmail,
-        password,
-        options: {
-          data: {
-            full_name: cleanName,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      setLoading(false);
-
-      if (signupError) {
-        setError(signupError.message);
-        return;
-      }
-
-      setMessage("Account created. Please check your email to verify your account.");
-    } catch (err) {
-      setLoading(false);
-      setError("Something went wrong. Please try again.");
-      console.error(err);
+    if (loginError) {
+      setError("Invalid email or password.");
+      return;
     }
+
+    window.location.href = "/dashboard";
   }
 
-  async function handleGoogleSignup() {
+  async function handleGoogleLogin() {
     setError("");
     setMessage("");
     setGoogleLoading(true);
@@ -110,14 +70,40 @@ export default function SignupPage() {
     }
   }
 
+  async function handleForgotPassword() {
+    setError("");
+    setMessage("");
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail) {
+      setError("Enter your email address first, then click Forgot Password.");
+      return;
+    }
+
+    setResetLoading(true);
+
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      cleanEmail,
+      {
+        redirectTo: `${window.location.origin}/auth/callback?next=/update-password`,
+      }
+    );
+
+    setResetLoading(false);
+
+    if (resetError) {
+      setError(resetError.message);
+      return;
+    }
+
+    setMessage("Password reset email sent. Check your inbox.");
+  }
+
   return (
     <main className="min-h-screen bg-[#f6f9ff] px-6 py-10 text-[#061633] lg:[zoom:0.55]">
       <div className="mx-auto mb-8 text-center">
-        <img
-          src="/logo/favicon.logo"
-          alt="GAHN AI"
-          className="mx-auto mb-4 h-20 w-20 object-contain"
-        />
+        <img src="/logo/brain.png" alt="GAHN AI" className="mx-auto mb-4 h-20 w-20 object-contain" />
 
         <h1 className="text-5xl font-black text-[#061633]">GAHN AI</h1>
 
@@ -131,32 +117,20 @@ export default function SignupPage() {
           <div className="absolute inset-0 bg-[#02122b]" />
 
           <div className="relative z-10">
-            <h2 className="text-4xl font-black">Start Your Journey</h2>
+            <h2 className="text-4xl font-black">Welcome Back</h2>
 
             <div className="mt-6 h-1 w-20 bg-blue-400" />
 
             <p className="mt-10 text-2xl leading-10">
-              Build skills, master subjects, and grow with{" "}
+              Continue your learning journey with{" "}
               <span className="text-blue-300">GAHN AI</span>
             </p>
 
             <div className="mt-12 space-y-8">
               {[
-                [
-                  "🧠",
-                  "Personalized Learning",
-                  "AI instructors adapt lessons and explanations to your needs.",
-                ],
-                [
-                  "📚",
-                  "Structured Learning Paths",
-                  "Follow guided learning journeys designed for real progress.",
-                ],
-                [
-                  "🏆",
-                  "Track Achievement",
-                  "Build skills, unlock milestones, and showcase growth.",
-                ],
+                ["👨‍🏫", "AI-Powered Instructors", "Learn from intelligent AI instructors that adapt to you."],
+                ["🎓", "Proven Learning Methods", "Methods built to help you understand, retain, and apply."],
+                ["🚀", "Real World Outcomes", "Build real skills, complete projects, and achieve your goals."],
               ].map(([icon, title, text]) => (
                 <div key={title} className="flex gap-5">
                   <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-blue-500/20 text-2xl">
@@ -174,23 +148,19 @@ export default function SignupPage() {
         </section>
 
         <section className="p-12">
-          <h2 className="text-center text-4xl font-black">Create Account</h2>
+          <h2 className="text-center text-4xl font-black">Login</h2>
 
           <p className="mt-3 text-center text-slate-500">
-            Join GAHN AI and start learning today.
+            Welcome back! Please login to continue.
           </p>
 
           <button
             type="button"
-            onClick={handleGoogleSignup}
+            onClick={handleGoogleLogin}
             disabled={googleLoading}
             className="mt-10 flex w-full items-center justify-center gap-5 rounded-xl border border-slate-200 bg-white px-5 py-4 text-xl shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <img
-              src="/google-logo/google.svg"
-              alt="Google"
-              className="h-8 w-8 object-contain"
-            />
+            <img src="/google-logo/google.svg" alt="Google" className="h-8 w-8 object-contain" />
             <span>{googleLoading ? "Connecting..." : "Continue with Google"}</span>
           </button>
 
@@ -200,20 +170,13 @@ export default function SignupPage() {
             <div className="h-px flex-1 bg-slate-200" />
           </div>
 
-          <form onSubmit={handleSignup}>
-            <input
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full rounded-2xl border border-slate-200 px-5 py-4 text-lg outline-none focus:border-blue-400"
-            />
-
+          <form onSubmit={handleLogin}>
             <input
               placeholder="Email Address"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-5 w-full rounded-2xl border border-slate-200 px-5 py-4 text-lg outline-none focus:border-blue-400"
+              className="w-full rounded-2xl border border-slate-200 px-5 py-4 text-lg outline-none focus:border-blue-400"
             />
 
             <input
@@ -224,39 +187,38 @@ export default function SignupPage() {
               className="mt-5 w-full rounded-2xl border border-slate-200 px-5 py-4 text-lg outline-none focus:border-blue-400"
             />
 
-            <input
-              placeholder="Confirm Password"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-5 w-full rounded-2xl border border-slate-200 px-5 py-4 text-lg outline-none focus:border-blue-400"
-            />
+            <div className="mt-5 flex items-center justify-between text-sm">
+              <label className="flex cursor-pointer items-center gap-2">
+                <input type="checkbox" className="h-4 w-4" />
+                Remember me
+              </label>
 
-            {error && (
-              <p className="mt-5 rounded-xl bg-red-50 p-4 text-red-600">
-                {error}
-              </p>
-            )}
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetLoading}
+                className="cursor-pointer text-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {resetLoading ? "Sending..." : "Forgot Password?"}
+              </button>
+            </div>
 
-            {message && (
-              <p className="mt-5 rounded-xl bg-green-50 p-4 text-green-700">
-                {message}
-              </p>
-            )}
+            {error && <p className="mt-5 rounded-xl bg-red-50 p-4 text-red-600">{error}</p>}
+            {message && <p className="mt-5 rounded-xl bg-green-50 p-4 text-green-700">{message}</p>}
 
             <button
               type="submit"
               disabled={loading}
               className="mt-8 flex w-full justify-center rounded-2xl bg-[#071f4d] px-5 py-4 text-lg font-black text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? "Logging In..." : "Login"}
             </button>
           </form>
 
           <p className="mt-8 text-center text-slate-500">
-            Already have an account?{" "}
-            <Link href="/login" className="font-bold text-blue-600">
-              Login
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="font-bold text-blue-600">
+              Signup
             </Link>
           </p>
         </section>

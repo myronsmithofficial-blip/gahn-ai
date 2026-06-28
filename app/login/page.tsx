@@ -56,7 +56,7 @@ export default function LoginPage() {
     const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?intent=login`,
         queryParams: {
           prompt: "select_account",
         },
@@ -103,7 +103,11 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-[#f6f9ff] px-6 py-10 text-[#061633] lg:[zoom:0.55]">
       <div className="mx-auto mb-8 text-center">
-        <img src="/logo/brain.png" alt="GAHN AI" className="mx-auto mb-4 h-20 w-20 object-contain" />
+        <img
+          src="/logo/favicon.png"
+          alt="GAHN AI"
+          className="mx-auto mb-4 h-20 w-20 object-contain"
+        />
 
         <h1 className="text-5xl font-black text-[#061633]">GAHN AI</h1>
 
@@ -128,9 +132,21 @@ export default function LoginPage() {
 
             <div className="mt-12 space-y-8">
               {[
-                ["👨‍🏫", "AI-Powered Instructors", "Learn from intelligent AI instructors that adapt to you."],
-                ["🎓", "Proven Learning Methods", "Methods built to help you understand, retain, and apply."],
-                ["🚀", "Real World Outcomes", "Build real skills, complete projects, and achieve your goals."],
+                [
+                  "👨‍🏫",
+                  "AI-Powered Instructors",
+                  "Learn from intelligent AI instructors that adapt to you.",
+                ],
+                [
+                  "🎓",
+                  "Proven Learning Methods",
+                  "Methods built to help you understand, retain, and apply.",
+                ],
+                [
+                  "🚀",
+                  "Real World Outcomes",
+                  "Build real skills, complete projects, and achieve your goals.",
+                ],
               ].map(([icon, title, text]) => (
                 <div key={title} className="flex gap-5">
                   <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-blue-500/20 text-2xl">
@@ -160,7 +176,11 @@ export default function LoginPage() {
             disabled={googleLoading}
             className="mt-10 flex w-full items-center justify-center gap-5 rounded-xl border border-slate-200 bg-white px-5 py-4 text-xl shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <img src="/google-logo/google.svg" alt="Google" className="h-8 w-8 object-contain" />
+            <img
+              src="/google-logo/google.svg"
+              alt="Google"
+              className="h-8 w-8 object-contain"
+            />
             <span>{googleLoading ? "Connecting..." : "Continue with Google"}</span>
           </button>
 
@@ -203,8 +223,17 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {error && <p className="mt-5 rounded-xl bg-red-50 p-4 text-red-600">{error}</p>}
-            {message && <p className="mt-5 rounded-xl bg-green-50 p-4 text-green-700">{message}</p>}
+            {error && (
+              <p className="mt-5 rounded-xl bg-red-50 p-4 text-red-600">
+                {error}
+              </p>
+            )}
+
+            {message && (
+              <p className="mt-5 rounded-xl bg-green-50 p-4 text-green-700">
+                {message}
+              </p>
+            )}
 
             <button
               type="submit"
