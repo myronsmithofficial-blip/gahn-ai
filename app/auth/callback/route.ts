@@ -45,13 +45,10 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const { data: existingProfile } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("id", user.id)
-    .maybeSingle();
+  const createdAt = new Date(user.created_at).getTime();
+  const accountOlderThanTwoMinutes = Date.now() - createdAt > 2 * 60 * 1000;
 
-  if (intent === "signup" && existingProfile) {
+  if (intent === "signup" && accountOlderThanTwoMinutes) {
     await supabase.auth.signOut();
 
     return NextResponse.redirect(
@@ -59,20 +56,18 @@ export async function GET(request: Request) {
     );
   }
 
-  if (!existingProfile) {
-    await supabase.from("profiles").insert({
-      id: user.id,
-      full_name:
-        user.user_metadata?.full_name ||
-        user.user_metadata?.name ||
-        "Learner",
-      avatar_url:
-        user.user_metadata?.avatar_url ||
-        user.user_metadata?.picture ||
-        "",
-      email: user.email,
-    });
-  }
+  await supabase.from("profiles").upsert({
+    id: user.id,
+    full_name:
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      "Learner",
+    avatar_url:
+      user.user_metadata?.avatar_url ||
+      user.user_metadata?.picture ||
+      "",
+    email: user.email,
+  });
 
   return NextResponse.redirect(new URL(next, request.url));
 }
