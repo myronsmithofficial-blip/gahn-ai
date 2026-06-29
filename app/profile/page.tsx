@@ -1,23 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
+function getInitials(name: string) {
+  return (
+    String(name)
+      .split(" ")
+      .filter(Boolean)
+      .map((word) => word[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "AI"
+  );
+}
+
+function getInitialColor(name: string) {
+  const colors = [
+    "bg-[#071f4d]",
+    "bg-blue-700",
+    "bg-violet-700",
+    "bg-indigo-700",
+    "bg-sky-700",
+    "bg-cyan-700",
+  ];
+
+  const total = String(name)
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+  return colors[total % colors.length];
+}
+
 export default function ProfilePage() {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [userId, setUserId] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState("Learner");
   const [email, setEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  const initials = useMemo(() => getInitials(fullName), [fullName]);
+  const avatarColor = useMemo(() => getInitialColor(fullName), [fullName]);
 
   useEffect(() => {
     async function loadProfile() {
@@ -35,189 +66,202 @@ export default function ProfilePage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name, avatar_url")
+        .select("full_name, avatar_url, email")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
-      setFullName(
-        profile?.full_name ||
-          user.user_metadata?.full_name ||
-          user.user_metadata?.name ||
-          ""
-      );
+      const fallbackName =
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        user.email?.split("@")[0] ||
+        "Learner";
 
-      setAvatarUrl(
-        profile?.avatar_url ||
-          user.user_metadata?.avatar_url ||
-          user.user_metadata?.picture ||
-          ""
-      );
+      if (!profile) {
+        await supabase.from("profiles").insert({
+          id: user.id,
+          full_name: fallbackName,
+          avatar_url: "",
+          email: user.email,
+        });
 
+        setFullName(fallbackName);
+        setAvatarUrl("");
+        setLoading(false);
+        return;
+      }
+
+      setFullName(profile.full_name || fallbackName);
+      setAvatarUrl(profile.avatar_url || "");
       setLoading(false);
     }
 
     loadProfile();
   }, [router]);
 
-  async function handleSave(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setMessage("");
-    setError("");
+  async function handleSaveName() {
     setSaving(true);
+    setError("");
+    setMessage("");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const cleanName = fullName.trim();
 
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-
-    let newAvatarUrl = avatarUrl;
-
-    if (avatarFile) {
-      const fileExt = avatarFile.name.split(".").pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, avatarFile, {
-          upsert: true,
-        });
-
-      if (uploadError) {
-        setSaving(false);
-        setError(uploadError.message);
-        return;
-      }
-
-      const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-      newAvatarUrl = data.publicUrl;
-      setAvatarUrl(newAvatarUrl);
-    }
-
-    const { error: profileError } = await supabase.from("profiles").upsert({
-      id: user.id,
-      full_name: fullName,
-      email: user.email,
-      avatar_url: newAvatarUrl,
-      updated_at: new Date().toISOString(),
-    });
-
-    if (profileError) {
+    if (!cleanName) {
       setSaving(false);
-      setError(profileError.message);
+      setError("Name cannot be empty.");
       return;
     }
 
-    await supabase.auth.updateUser({
-      data: {
-        full_name: fullName,
-        avatar_url: newAvatarUrl,
-      },
-    });
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ full_name: cleanName })
+      .eq("id", userId);
 
     setSaving(false);
-    setMessage("Profile updated successfully.");
 
-    setTimeout(() => {
-      router.push("/dashboard");
-      router.refresh();
-    }, 800);
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+
+    setMessage("Profile updated.");
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+
+    if (!file || !userId) return;
+
+    setSaving(true);
+    setError("");
+    setMessage("");
+
+    const fileExt = file.name.split(".").pop();
+    const filePath = `${userId}/avatar.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, {
+        upsert: true,
+      });
+
+    if (uploadError) {
+      setSaving(false);
+      setError(uploadError.message);
+      return;
+    }
+
+    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+    const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: publicUrl })
+      .eq("id", userId);
+
+    setSaving(false);
+
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+
+    setAvatarUrl(publicUrl);
+    setMessage("Profile image updated.");
   }
 
   if (loading) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f6f9ff] text-[#061633]">
-        <p className="text-xl font-black">Loading profile...</p>
+      <main className="min-h-screen bg-white p-10 text-[#061633]">
+        <p className="font-black">Loading profile...</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f9ff] px-6 py-10 text-[#061633]">
-      <div className="mx-auto max-w-2xl rounded-3xl bg-white p-8 shadow-xl">
-        <Link href="/dashboard" className="text-sm font-bold text-blue-600">
+    <main className="min-h-screen bg-white px-8 py-10 text-[#061633] lg:[zoom:0.85] xl:[zoom:0.75] 2xl:[zoom:0.85]">
+      <div className="mx-auto max-w-3xl">
+        <Link href="/dashboard" className="text-lg font-black text-blue-600">
           ← Back to Dashboard
         </Link>
 
-        <h1 className="mt-6 text-4xl font-black">Edit Profile</h1>
-        <p className="mt-2 text-slate-500">
+        <h1 className="mt-10 text-5xl font-black">Edit Profile</h1>
+        <p className="mt-4 text-xl text-slate-600">
           Update your name and profile image.
         </p>
 
-        <form onSubmit={handleSave} className="mt-8">
-          <div className="flex items-center gap-5">
+        <section className="mt-12 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <div className="flex flex-col gap-8 sm:flex-row sm:items-center">
             {avatarUrl ? (
               <img
                 src={avatarUrl}
                 alt="Profile"
-                className="h-24 w-24 rounded-full object-cover"
+                onError={() => setAvatarUrl("")}
+                className="h-32 w-32 rounded-full object-cover"
               />
             ) : (
-              <div className="grid h-24 w-24 place-items-center rounded-full bg-[#071f4d] text-2xl font-black text-white">
-                {fullName
-                  .split(" ")
-                  .map((word) => word[0])
-                  .join("")
-                  .slice(0, 2)
-                  .toUpperCase() || "AI"}
+              <div
+                className={`grid h-32 w-32 place-items-center rounded-full ${avatarColor} text-4xl font-black text-white`}
+              >
+                {initials}
               </div>
             )}
 
-           <label className="cursor-pointer rounded-xl bg-[#071f4d] px-5 py-3 text-sm font-black text-white hover:bg-[#0b2d6b]">
-  Change Image
-  <input
-    type="file"
-    accept="image/*"
-    className="hidden"
-    onChange={(e) => {
-      const file = e.target.files?.[0] || null;
-      setAvatarFile(file);
+            <div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="rounded-2xl bg-[#071f4d] px-8 py-4 text-lg font-black text-white"
+              >
+                Change Image
+              </button>
 
-      if (file) {
-        setAvatarUrl(URL.createObjectURL(file));
-      }
-    }}
-  />
-</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+
+              <p className="mt-3 text-sm text-slate-500">
+                If no image is uploaded, your initials will show automatically.
+              </p>
+            </div>
           </div>
 
-          <label className="mt-8 block text-sm font-black">Full Name</label>
-          <input
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="mt-2 w-full rounded-2xl border border-slate-200 px-5 py-4 outline-none focus:border-blue-400"
-          />
+          <div className="mt-10">
+            <label className="text-sm font-black uppercase tracking-[0.14em] text-slate-500">
+              Full Name
+            </label>
 
-          <label className="mt-6 block text-sm font-black">Email</label>
-          <input
-            value={email}
-            disabled
-            className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500"
-          />
+            <input
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="mt-3 w-full rounded-2xl border border-slate-200 px-5 py-4 text-lg outline-none focus:border-blue-500"
+            />
+          </div>
 
-          {message && (
-            <p className="mt-5 rounded-xl bg-green-50 p-4 text-green-700">
-              {message}
-            </p>
-          )}
-
+          
           {error && (
-            <p className="mt-5 rounded-xl bg-red-50 p-4 text-red-600">
+            <p className="mt-6 rounded-xl bg-red-50 p-4 text-red-600">
               {error}
             </p>
           )}
 
+          {message && (
+            <p className="mt-6 rounded-xl bg-green-50 p-4 text-green-700">
+              {message}
+            </p>
+          )}
+
           <button
-            type="submit"
+            onClick={handleSaveName}
             disabled={saving}
-            className="mt-8 w-full rounded-2xl bg-[#071f4d] px-5 py-4 font-black text-white disabled:opacity-60"
+            className="mt-8 rounded-2xl bg-blue-600 px-8 py-4 text-lg font-black text-white disabled:opacity-60"
           >
             {saving ? "Saving..." : "Save Profile"}
           </button>
-        </form>
+        </section>
       </div>
     </main>
   );

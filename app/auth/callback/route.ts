@@ -56,18 +56,24 @@ export async function GET(request: Request) {
     );
   }
 
-  await supabase.from("profiles").upsert({
-    id: user.id,
-    full_name:
-      user.user_metadata?.full_name ||
-      user.user_metadata?.name ||
-      "Learner",
-    avatar_url:
-      user.user_metadata?.avatar_url ||
-      user.user_metadata?.picture ||
-      "",
-    email: user.email,
-  });
+  const { data: existingProfile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!existingProfile) {
+    await supabase.from("profiles").insert({
+      id: user.id,
+      full_name:
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        user.email?.split("@")[0] ||
+        "Learner",
+      avatar_url: "",
+      email: user.email,
+    });
+  }
 
   return NextResponse.redirect(new URL(next, request.url));
 }

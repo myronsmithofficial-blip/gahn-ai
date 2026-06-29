@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -35,12 +35,41 @@ const instructors = [
   ["/instructors/hannah.jpg", "Hannah", "Nurse Instructor"],
 ];
 
+function getInitials(name: string) {
+  return String(name)
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "AI";
+}
+
+function getInitialColor(name: string) {
+  const colors = [
+    "bg-[#071f4d]",
+    "bg-blue-700",
+    "bg-violet-700",
+    "bg-indigo-700",
+    "bg-sky-700",
+    "bg-cyan-700",
+  ];
+
+  const total = String(name)
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+  return colors[total % colors.length];
+}
+
 export default function DashboardPage() {
   const router = useRouter();
 
   const [fullName, setFullName] = useState("Learner");
   const [initials, setInitials] = useState("AI");
   const [avatarUrl, setAvatarUrl] = useState("");
+
+  const avatarColor = useMemo(() => getInitialColor(fullName), [fullName]);
 
   useEffect(() => {
     async function loadUserProfile() {
@@ -55,35 +84,36 @@ export default function DashboardPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name, avatar_url")
+        .select("full_name, avatar_url, email")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
-      const name =
-        profile?.full_name ||
+      const fallbackName =
         user.user_metadata?.full_name ||
         user.user_metadata?.name ||
-        user.email ||
+        user.email?.split("@")[0] ||
         "Learner";
 
-      const image =
-        profile?.avatar_url ||
-        user.user_metadata?.avatar_url ||
-        user.user_metadata?.picture ||
-        "";
+      if (!profile) {
+        await supabase.from("profiles").insert({
+          id: user.id,
+          full_name: fallbackName,
+          avatar_url: "",
+          email: user.email,
+        });
 
-      setFullName(name);
-      setAvatarUrl(image);
+        setFullName(fallbackName);
+        setInitials(getInitials(fallbackName));
+        setAvatarUrl("");
+        return;
+      }
 
-      const generatedInitials = String(name)
-        .split(" ")
-        .filter(Boolean)
-        .map((word: string) => word[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase();
+      const savedName = profile.full_name || fallbackName;
+      const savedAvatar = profile.avatar_url || "";
 
-      setInitials(generatedInitials || "AI");
+      setFullName(savedName);
+      setInitials(getInitials(savedName));
+      setAvatarUrl(savedAvatar);
     }
 
     loadUserProfile();
@@ -184,9 +214,10 @@ export default function DashboardPage() {
                       src={avatarUrl}
                       alt={fullName}
                       className="h-10 w-10 rounded-full object-cover"
+                      onError={() => setAvatarUrl("")}
                     />
                   ) : (
-                    <div className="grid h-10 w-10 place-items-center rounded-full bg-[#071f4d] text-sm font-black text-white">
+                    <div className={`grid h-10 w-10 place-items-center rounded-full ${avatarColor} text-sm font-black text-white`}>
                       {initials}
                     </div>
                   )}
@@ -254,9 +285,7 @@ export default function DashboardPage() {
                     <h4 className="mt-4 text-sm font-black uppercase leading-tight">
                       {title}
                     </h4>
-                    <p className="mt-3 text-xs leading-5 text-slate-600">
-                      {text}
-                    </p>
+                    <p className="mt-3 text-xs leading-5 text-slate-600">{text}</p>
                     <div className="mt-5 inline-block rounded-lg bg-[#071f4d] px-4 py-2 text-xs font-bold text-white">
                       Explore →
                     </div>
@@ -285,75 +314,31 @@ export default function DashboardPage() {
             </section>
 
             <section className="mt-6 grid gap-4 xl:grid-cols-3">
-              <div className="rounded-2xl bg-white p-5 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-black">Learning Overview</h3>
-                  <span className="text-xs font-bold text-slate-400">This Week</span>
-                </div>
+              <DashboardMiniCard title="Learning Overview" sideText="This Week">
+                <p className="font-black">No learning data yet</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Activity appears after your first lesson.
+                </p>
+              </DashboardMiniCard>
 
-                <div className="mt-5 grid h-36 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center">
-                  <div>
-                    <p className="font-black">No learning data yet</p>
-                    <p className="mt-1 text-sm text-slate-500">
-                      Activity appears after your first lesson.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <DashboardMiniCard title="Instructor Recommendations" linkText="View All">
+                <p className="text-sm font-black">No recommendations yet</p>
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Your instructors will recommend practice after you start a lesson.
+                </p>
+              </DashboardMiniCard>
 
-              <div className="rounded-2xl bg-white p-5 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-black">Instructor Recommendations</h3>
-                  <Link href="/in-progress" className="text-sm text-blue-600">
-                    View All
-                  </Link>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-slate-200 p-4">
-                  <p className="text-sm font-black">No recommendations yet</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">
-                    Your instructors will recommend practice after you start a lesson.
-                  </p>
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-white p-5 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-black">Recent Achievements</h3>
-                  <Link href="/in-progress" className="text-sm text-blue-600">
-                    View All
-                  </Link>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center text-sm text-slate-500">
+              <DashboardMiniCard title="Recent Achievements" linkText="View All">
+                <p className="text-sm text-slate-500">
                   Achievements appear after completed lessons.
-                </div>
-              </div>
+                </p>
+              </DashboardMiniCard>
             </section>
 
             <section className="mt-6 grid gap-4 2xl:hidden">
               <DashboardRightColumn />
             </section>
           </section>
-
-          <footer className="grid gap-4 bg-[#02122b] px-4 py-5 text-white sm:grid-cols-2 xl:grid-cols-4 xl:px-8">
-            {[
-              ["✦", "AI Powered Learning", "Personalized for you"],
-              ["⚗", "Proven Learning Methods", "Science backed results"],
-              ["🏫", "Real World Outcomes", "Skills, certificates, portfolios"],
-              ["🌍", "Global Community", "Learn. Share. Grow."],
-            ].map(([icon, title, text]) => (
-              <div key={title} className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10">
-                  {icon}
-                </div>
-                <div>
-                  <p className="text-sm font-black">{title}</p>
-                  <p className="text-xs text-blue-100/60">{text}</p>
-                </div>
-              </div>
-            ))}
-          </footer>
         </div>
 
         <aside className="hidden space-y-4 p-5 2xl:block">
@@ -361,6 +346,36 @@ export default function DashboardPage() {
         </aside>
       </div>
     </main>
+  );
+}
+
+function DashboardMiniCard({
+  title,
+  sideText,
+  linkText,
+  children,
+}: {
+  title: string;
+  sideText?: string;
+  linkText?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <h3 className="font-black">{title}</h3>
+        {sideText && <span className="text-xs font-bold text-slate-400">{sideText}</span>}
+        {linkText && (
+          <Link href="/in-progress" className="text-sm text-blue-600">
+            {linkText}
+          </Link>
+        )}
+      </div>
+
+      <div className="mt-5 grid min-h-36 place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center">
+        <div>{children}</div>
+      </div>
+    </div>
   );
 }
 
